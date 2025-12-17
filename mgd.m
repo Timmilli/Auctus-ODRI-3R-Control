@@ -16,6 +16,7 @@ R0T3 = R0T3(1:3, 4)
 
 %%
 % Plot
+% Does not take in account the small h[2,3] parameters.
 close all; clc;
 
 %    l1 l2 l3 h1 h2 h3
@@ -27,3 +28,16 @@ point = subs(R0T3, [l1 l2 l3 h1 h2 h3], L);
 point = subs(point, [theta1 theta2 theta3], Q);
 
 plotDotAndArm(point, [1 1 1], Q)
+
+%%
+% Methode de Paul
+
+syms Px Py Pz s0 n0 a0 real;
+
+U0 = [0 0 0 Px;
+      s0 n0 a0 Py;
+      0 0 0 Pz;
+      0 0 0 1]; 
+
+R0T1
+th_inv(R0T1)
