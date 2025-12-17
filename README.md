@@ -1,6 +1,6 @@
 # Auctus ODRI dynamic control
 
-## Authors
+## Authors
 - Quentin Fallito
 - Guénaël Roger
 - Thomas Wanchai MENIER
