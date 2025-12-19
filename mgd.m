@@ -11,8 +11,15 @@ R1pT2 = th_trans(0, 0, l2) * th_rotx(-Pi/2);
 R2T2p = th_rotz(theta3) * th_trans(0, 0, h3) * th_rotx(Pi/2);
 R2pT3 = th_trans(0, 0, l3);
 
-R0T3 = R0T1 * R1T1p * R1pT2 * R2T2p * R2pT3;
-R0T3 = R0T3(1:3, 4)
+R1T2 = R1T1p * R1pT2;
+R2T3 = R2T2p * R2pT3;
+
+R1T3 = R1T2 * R2T3;
+R0T3 = R0T1 * R1T3;
+
+%%
+% MGD
+MGD = simplify(R0T3(1:3,4))
 
 %%
 % Plot
@@ -32,12 +39,19 @@ plotDotAndArm(point, [1 1 1], Q)
 %%
 % Methode de Paul
 
-syms Px Py Pz s0 n0 a0 real;
+syms sx sy sz nx ny nz ax ay az Px Py Pz real;
 
-U0 = [0 0 0 Px;
-      s0 n0 a0 Py;
-      0 0 0 Pz;
+U0 = [sx nx ax Px;
+      sy ny ay Py;
+      sz nz az Pz;
       0 0 0 1]; 
 
-R0T1
-th_inv(R0T1)
+R1T0 = th_inv(R0T1);
+
+R2T1 = th_inv(R1T2);
+
+% Eq 1
+
+R1T0U0 = R1T0 * U0;
+R1T0U0(3,4)
+R1T3(3,4)
