@@ -20,10 +20,14 @@ R0T3 = R0T1 * R1T3;
 
 % MGD
 MGD = simplify(R0T3(1:3,4)) % only position-based
+subs(MGD, [l2 l3 h1 h2 h3 theta1 theta2 theta3], [0 0 1 1 1 0 0 0])
 l = [l2 l3];
 h = [h1 h2 h3];
 q = [theta1 theta2 theta3];
+J_MGD = jacobian(MGD, [theta1 theta2 theta3]);
 matlabFunction(MGD, 'File', 'calc_mgd.m', 'Vars', {l, h, q});
+matlabFunction(J_MGD, 'File', 'calc_jacobian_mgd.m', 'Vars', {l, h, q});
+
 %%
 % Plot
 % Does not take in account the small h[2,3] parameters.
@@ -34,7 +38,7 @@ L = [0  0];
 %    h1 h2 h3
 h = [1  1  1];
 %    t1 t2 t3
-q = [0  0  0];
+q = [0 0 0];
 
-MGD = calc_mgd(L, h, q);
-plotDotAndArm(MGD, h, q);
+p = calc_mgd(L, h, q)
+plotDotAndArm(p, h, q);
