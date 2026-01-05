@@ -2,7 +2,7 @@ clear; close all; clc;
 addpath("./tr_homogenes")
 
 % Using Denavit-Hartenberg convention (1955)
-syms l1 l2 l3 h1 h2 h3 theta1 theta2 theta3 alpha1 alpha3 real;
+syms l2 l3 h1 h2 h3 theta1 theta2 theta3 alpha1 alpha3 real;
 Pi=sym(pi);
 
 R0T1  = th_rotz(theta1) * th_trans(0, 0, h1) * th_rotx(-Pi/2);
@@ -17,41 +17,24 @@ R2T3 = R2T2p * R2pT3;
 R1T3 = R1T2 * R2T3;
 R0T3 = R0T1 * R1T3;
 
-%%
-% MGD
-MGD = simplify(R0T3(1:3,4))
 
+% MGD
+MGD = simplify(R0T3(1:3,4)) % only position-based
+l = [l2 l3];
+h = [h1 h2 h3];
+q = [theta1 theta2 theta3];
+matlabFunction(MGD, 'File', 'calc_mgd.m', 'Vars', {l, h, q});
 %%
 % Plot
 % Does not take in account the small h[2,3] parameters.
 close all; clc;
 
-%    l1 l2 l3 h1 h2 h3
-L = [0  1  1  1  0  0];
+%    l2 l3
+L = [0  0];
+%    h1 h2 h3
+h = [1  1  1];
 %    t1 t2 t3
-Q = [0  0  0];
+q = [0  0  0];
 
-point = subs(R0T3, [l1 l2 l3 h1 h2 h3], L);
-point = subs(point, [theta1 theta2 theta3], Q);
-
-plotDotAndArm(point, [1 1 1], Q)
-
-%%
-% Methode de Paul
-
-syms sx sy sz nx ny nz ax ay az Px Py Pz real;
-
-U0 = [sx nx ax Px;
-      sy ny ay Py;
-      sz nz az Pz;
-      0 0 0 1]; 
-
-R1T0 = th_inv(R0T1);
-
-R2T1 = th_inv(R1T2);
-
-% Eq 1
-
-R1T0U0 = R1T0 * U0;
-R1T0U0(3,4)
-R1T3(3,4)
+MGD = calc_mgd(L, h, q);
+plotDotAndArm(MGD, h, q);
