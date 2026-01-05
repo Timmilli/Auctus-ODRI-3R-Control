@@ -1,0 +1,17 @@
+all: build run
+
+build:
+	docker build -t leg3dof:gpu .
+
+run:
+	xhost +local:docker
+	docker run -it --rm \
+		--gpus all \
+		--net=host \
+		--env DISPLAY=$DISPLAY \
+		--env QT_X11_NO_MITSHM=1 \
+		--env NVIDIA_VISIBLE_DEVICES=all \
+		--env NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility \
+		--volume /tmp/.X11-unix:/tmp/.X11-unix \
+		--privileged \
+		leg3dof:gpu
