@@ -8,14 +8,16 @@ RUN apt-get update && apt-get install -y \
     ros-humble-ros2-controllers \
     ros-humble-xacro \
     python3-colcon-common-extensions \
-		vim
+    vim
 
 # Create workspace
-COPY ./leg3dof_ws /leg3dof_ws
+COPY ./leg3dof_ws Justfile /leg3dof_ws/
 WORKDIR /leg3dof_ws
 
 # Source ROS automatically
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
+RUN echo 'alias clcn="colcon build --symlink-install && source install/setup.bash"'
 
 CMD ["bash"]
 
