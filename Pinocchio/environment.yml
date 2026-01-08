@@ -1,0 +1,10 @@
+name: pinocchio_env
+dependencies:
+  - python=3.12
+  - pip
+  - pinocchio=3.8
+  - gepetto-viewer-corba
+  - example-robot-data
+  - pip:
+    - meshcat
+    - panda3d_viewer
