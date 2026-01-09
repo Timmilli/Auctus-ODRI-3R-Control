@@ -1,0 +1,9 @@
+[submodule "ros_docker/master-board"]
+	path = ros_docker/master-board
+	url = https://github.com/open-dynamic-robot-initiative/master-board.git
+[submodule "ros_docker/odri_control_interface"]
+	path = ros_docker/odri_control_interface
+	url = https://github.com/open-dynamic-robot-initiative/odri_control_interface.git
+[submodule "ros_docker/example-robot-data"]
+	path = ros_docker/example-robot-data
+	url = https://github.com/Gepetto/example-robot-data.git
