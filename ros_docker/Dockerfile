@@ -30,7 +30,6 @@ RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3 
 
 # Create workspace
 WORKDIR /odri
-COPY . /odri/
 
 # Source ROS automatically
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
