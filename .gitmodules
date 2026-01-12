@@ -1,0 +1,3 @@
+[submodule "data_collection/master-board"]
+	path = data_collection/master-board
+	url = https://github.com/open-dynamic-robot-initiative/master-board.git
