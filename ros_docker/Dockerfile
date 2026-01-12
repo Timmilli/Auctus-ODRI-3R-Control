@@ -2,6 +2,10 @@ FROM osrf/ros:humble-desktop
 
 # Install Gazebo + ROS tools
 RUN apt-get update && apt-get install -y \
+   	build-essential \
+		binutils \
+		gcc \
+		g++ \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-gazebo-ros2-control \
     ros-humble-ros2-control \
