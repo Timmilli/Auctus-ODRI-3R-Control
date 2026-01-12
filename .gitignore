@@ -1,3 +1,7 @@
 calc_mgd.m
 calc_jacobian_mgd.m
 *.mp4
+ros_docker/example-robot-data
+ros_docker/master-boarad
+ros_docker/odri_control_interface
+
