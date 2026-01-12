@@ -1,6 +1,6 @@
 # About 
 
-# Control
+## Bot description
 
 With the master board at the back of the robot, the motors are indexed accordingly:
 
@@ -18,3 +18,15 @@ With the master board at the back of the robot, the motors are indexed according
 | B | L | HAA | ? |
 | B | L | HFE | ? |
 | B | L | K | ? |
+
+# ROS2 Docker
+
+Directory already setup up to use a Docker with ROS2. See according [README](./ros_docker/README.md)
+
+# Pinocchio
+
+Directory to use Pinocchio. Environment can be setup up via Conda and the `environment.yml` file. See according [README](./Pinocchio/README.md).
+
+# Matlab
+
+Directory containing Matlab code about the dynamics of the robot. See according [README](./Matlab/README.md)
