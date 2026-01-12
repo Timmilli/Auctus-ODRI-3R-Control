@@ -28,11 +28,11 @@ default: all
 	pkg-config --atleast-version=3.1 catch2
 	$(CC) $(CFLAGS) $(INCLUDES) $(shell pkg-config --cflags catch2) -std=c++17 -o $(BUILD_DIR)/$@ -c $^
 
-main: main.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o
+one_leg_control: one_leg_control.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $(BIN_DIR)/main $(addprefix $(BUILD_DIR)/,$^) -pthread
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/one_leg_control $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-all: clear clean main
+all: clear clean one_leg_control
 
 clean: 
 	#$(RM) -rf $(BUILD_DIR)
