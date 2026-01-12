@@ -83,26 +83,28 @@ int main(int argc, char **argv) {
         break;
       case 1:
         // closed loop, position
-        for (int i = 3; i < 4; i++) {
-          if (i % 2 == 0) {
-            if (!robot_if.motor_drivers[i / 2].is_connected)
-              continue; // ignoring the motors of a disconnected slave
+        // FLHAA motor
+        if (robot_if.motors[1].IsEnabled()) {
+          double cur =
+              mvts.GetCurrent(init_pos[1], t, robot_if.motors[1].GetPosition(),
+                              robot_if.motors[1].GetVelocity());
+          robot_if.motors[1].SetCurrentReference(cur);
+        }
 
-            // making sure that the transaction with the corresponding µdriver
-            // board succeeded
-            if (robot_if.motor_drivers[i / 2].error_code == 0xf) {
-              // printf("Transaction with SPI%d failed\n", i / 2);
-              continue; // user should decide what to do in that case, here we
-                        // ignore that motor
-            }
-          }
+        // FLHFE motor
+        if (robot_if.motors[3].IsEnabled()) {
+          double cur =
+              mvts.GetCurrent(init_pos[3], t, robot_if.motors[3].GetPosition(),
+                              robot_if.motors[3].GetVelocity());
+          robot_if.motors[3].SetCurrentReference(cur);
+        }
 
-          if (robot_if.motors[i].IsEnabled()) {
-            double cur = mvts.GetCurrent(init_pos[i], t,
-                                         robot_if.motors[i].GetPosition(),
-                                         robot_if.motors[i].GetVelocity());
-            robot_if.motors[i].SetCurrentReference(cur);
-          }
+        // FLK motor
+        if (robot_if.motors[2].IsEnabled()) {
+          double cur =
+              mvts.GetCurrent(init_pos[2], t, robot_if.motors[2].GetPosition(),
+                              robot_if.motors[2].GetVelocity());
+          robot_if.motors[2].SetCurrentReference(cur);
         }
         break;
       }
