@@ -8,6 +8,7 @@ run:
 	docker run -it --rm \
 		--gpus all \
 		--net=host \
+	  --device=/dev/ttyUSB0 \
 		--env DISPLAY=$DISPLAY \
 		--env QT_X11_NO_MITSHM=1 \
 		--env NVIDIA_VISIBLE_DEVICES=all \
