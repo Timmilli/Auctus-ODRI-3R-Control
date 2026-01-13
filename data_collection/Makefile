@@ -32,7 +32,11 @@ one_leg_control: one_leg_control.o ESPNOW_manager.o ESPNOW_types.o Link_manager.
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/one_leg_control $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-all: clear clean one_leg_control
+pid_optimization: pid_optimization.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/pid_optimization $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+all: clear clean one_leg_control pid_optimization
 
 clean: 
 	#$(RM) -rf $(BUILD_DIR)
