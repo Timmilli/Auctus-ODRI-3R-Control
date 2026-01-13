@@ -10,7 +10,7 @@
 #include "master_board_sdk/defines.h"
 #include "master_board_sdk/master_board_interface.h"
 
-#define N_SLAVES_CONTROLED 3
+#define N_SLAVES_CONTROLED 6
 
 int main(int argc, char **argv) {
   if (argc != 2) {
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   }
 
   int cpt = 0;
-  BasicMovement mvts = BasicMovement();
+  BasicMovement mvts = BasicMovement(M_PI, 0.5, 5., 0.05, 4.0);
   double dt = 0.001;
   double t = 0;
   double init_pos[N_SLAVES * 2] = {0};
@@ -84,27 +84,19 @@ int main(int argc, char **argv) {
       case 1:
         // closed loop, position
         // FLHAA motor
-        if (robot_if.motors[1].IsEnabled()) {
+        int i = 2;
+        if (robot_if.motors[i].IsEnabled()) {
           double cur =
-              mvts.GetCurrent(init_pos[1], t, robot_if.motors[1].GetPosition(),
-                              robot_if.motors[1].GetVelocity());
-          robot_if.motors[1].SetCurrentReference(cur);
+              mvts.GetCurrent(init_pos[i], t, robot_if.motors[i].GetPosition(),
+                              robot_if.motors[i].GetVelocity());
+          robot_if.motors[i].SetCurrentReference(cur);
         }
-
-        // FLHFE motor
-        if (robot_if.motors[3].IsEnabled()) {
+        i = 5;
+        if (robot_if.motors[i].IsEnabled()) {
           double cur =
-              mvts.GetCurrent(init_pos[3], t, robot_if.motors[3].GetPosition(),
-                              robot_if.motors[3].GetVelocity());
-          robot_if.motors[3].SetCurrentReference(cur);
-        }
-
-        // FLK motor
-        if (robot_if.motors[2].IsEnabled()) {
-          double cur =
-              mvts.GetCurrent(init_pos[2], t, robot_if.motors[2].GetPosition(),
-                              robot_if.motors[2].GetVelocity());
-          robot_if.motors[2].SetCurrentReference(cur);
+              mvts.GetCurrent(init_pos[i], t, robot_if.motors[i].GetPosition(),
+                              robot_if.motors[i].GetVelocity());
+          robot_if.motors[i].SetCurrentReference(cur);
         }
         break;
       }
