@@ -2,10 +2,10 @@
 
 Based on the ODRI [TODO link] quadruped bot, this project aims to perfect the modeling and the control of one paw.
 
-<div style="display: flex; justify-content: center;">
+<p align="center">
     <img alt='gif of the bot'
          src='images/logo_auctus.png' />
-</div> <!-- TODO-->
+</p> <!-- TODO-->
 
 ## 📄 This project in short
 
@@ -69,11 +69,11 @@ Directory containing Matlab code about the dynamics of the robot. See according 
 
 [TODO]
 
-<div style="display: flex; justify-content: center; gap: 3rem;">
+<p align="center">
     <img alt='auctus logo'
          src='images/logo_auctus.png' 
-         height=80/>
+         height=70/>
     <img alt='emmk_logo'
          src='images/logo_em.jpg'
-         height=80/>
-</div>
+         height=70/>
+</p>
