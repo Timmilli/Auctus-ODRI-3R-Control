@@ -14,11 +14,27 @@ BasicMovement::BasicMovement(double amplitude, double freq, double kp,
                              double kd, double iq_sat)
     : _amplitude(amplitude), _freq(freq), _kp(kp), _kd(kd), _iq_sat(iq_sat) {}
 
-double BasicMovement::GetCurrent(double init_pos, double elapsed_time,
-                                 double motor_position, double motor_velocity) {
+double BasicMovement::getCurrentFromTime(double init_pos, double elapsed_time,
+                                         double motor_position,
+                                         double motor_velocity) {
   double ref = init_pos + _amplitude * sin(2 * M_PI * _freq * elapsed_time);
   double v_ref =
       2. * M_PI * _freq * _amplitude * cos(2 * M_PI * _freq * elapsed_time);
+  double p_err = ref - motor_position;
+  double v_err = v_ref - motor_velocity;
+  double cur = _kp * p_err + _kd * v_err;
+  if (cur > _iq_sat)
+    cur = _iq_sat;
+  if (cur < -_iq_sat)
+    cur = -_iq_sat;
+  return cur;
+}
+
+double BasicMovement::getCurrentFromCons(double init_pos, int cons,
+                                         double motor_position,
+                                         double motor_velocity) {
+  double ref = init_pos + cons;
+  double v_ref = 0;
   double p_err = ref - motor_position;
   double v_err = v_ref - motor_velocity;
   double cur = _kp * p_err + _kd * v_err;

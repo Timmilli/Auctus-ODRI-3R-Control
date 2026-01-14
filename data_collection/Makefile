@@ -36,7 +36,15 @@ pid_optimization: pid_optimization.o ESPNOW_manager.o ESPNOW_types.o Link_manage
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/pid_optimization $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-all: clear clean one_leg_control pid_optimization
+trajectory_following: trajectory_following.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/trajectory_following $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+test: test.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/test $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+all: clear clean one_leg_control pid_optimization test trajectory_following
 
 clean: 
 	#$(RM) -rf $(BUILD_DIR)
