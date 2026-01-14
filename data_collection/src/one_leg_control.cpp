@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <chrono>
+#include <cstdlib>
+#include <ctime>
 #include <math.h>
 #include <stdexcept>
 #include <stdio.h>
@@ -86,16 +88,16 @@ int main(int argc, char **argv) {
         // FLHAA motor
         int i = 2;
         if (robot_if.motors[i].IsEnabled()) {
-          double cur =
-              mvts.GetCurrent(init_pos[i], t, robot_if.motors[i].GetPosition(),
-                              robot_if.motors[i].GetVelocity());
+          double cur = mvts.getCurrentFromTime(
+              init_pos[i], t, robot_if.motors[i].GetPosition(),
+              robot_if.motors[i].GetVelocity());
           robot_if.motors[i].SetCurrentReference(cur);
         }
         i = 5;
         if (robot_if.motors[i].IsEnabled()) {
-          double cur =
-              mvts.GetCurrent(init_pos[i], t, robot_if.motors[i].GetPosition(),
-                              robot_if.motors[i].GetVelocity());
+          double cur = mvts.getCurrentFromTime(
+              init_pos[i], t, robot_if.motors[i].GetPosition(),
+              robot_if.motors[i].GetVelocity());
           robot_if.motors[i].SetCurrentReference(cur);
         }
         break;
