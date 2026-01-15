@@ -1,6 +1,8 @@
+#include <fstream>
 #include <math.h>
 
 #include "basic_mouvements.h"
+#include "csv_filler.h"
 
 BasicMovement::BasicMovement() {
   _kp = 5.;
@@ -32,7 +34,8 @@ double BasicMovement::getCurrentFromTime(double init_pos, double elapsed_time,
 
 double BasicMovement::getCurrentFromCons(double init_pos, int cons,
                                          double motor_position,
-                                         double motor_velocity) {
+                                         double motor_velocity, CsvFiller &f,
+                                         double t) {
   double ref = init_pos + cons;
   double v_ref = 0;
   double p_err = ref - motor_position;
@@ -42,5 +45,6 @@ double BasicMovement::getCurrentFromCons(double init_pos, int cons,
     cur = _iq_sat;
   if (cur < -_iq_sat)
     cur = -_iq_sat;
+  f.writeData(t, p_err);
   return cur;
 }

@@ -1,4 +1,10 @@
+#pragma once
+
+#include <fstream>
+
+#include "csv_filler.h"
 #include "trajectory_generator.h"
+
 class BasicMovement {
 private:
   double _amplitude;
@@ -14,5 +20,5 @@ public:
   double getCurrentFromTime(double init_pos, double elapsed_time,
                             double motor_position, double motor_velocity);
   double getCurrentFromCons(double init_pos, int cons, double motor_position,
-                            double motor_velocity);
+                            double motor_velocity, CsvFiller &f, double t);
 };
