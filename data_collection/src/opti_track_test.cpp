@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
             .p_haa = robot_if.motors[FRHAA].GetPosition() - init_pos[FRHAA],
             .p_hfe = robot_if.motors[FRHFE].GetPosition() - init_pos[FRHFE],
             .p_k = robot_if.motors[FRK].GetPosition() - init_pos[FRK]};
-        if (t > 0.5) {
+        if (t > 2) {
           if (robot_if.motors[FRHAA].IsEnabled()) {
             double cur = haa_mvt.getCurrentFromCons(
                 init_pos[FRHAA], obj.p_haa,
@@ -131,6 +131,28 @@ int main(int argc, char **argv) {
           if (robot_if.motors[FRK].IsEnabled()) {
             double cur = k_mvt.getCurrentFromCons(
                 init_pos[FRK], obj.p_k, robot_if.motors[FRK].GetPosition(),
+                robot_if.motors[FRK].GetVelocity());
+            // TODO write the errors in the csv
+            robot_if.motors[FRK].SetCurrentReference(cur);
+          }
+        } else if (t > 1) {
+          if (robot_if.motors[FRHAA].IsEnabled()) {
+            double cur = haa_mvt.getCurrentFromCons(
+                init_pos[FRHAA], 0, robot_if.motors[FRHAA].GetPosition(),
+                robot_if.motors[FRHAA].GetVelocity());
+            // TODO write the errors in the csv
+            robot_if.motors[FRHAA].SetCurrentReference(cur);
+          }
+          if (robot_if.motors[FRHFE].IsEnabled()) {
+            double cur = hfe_mvt.getCurrentFromCons(
+                init_pos[FRHFE], 0, robot_if.motors[FRHFE].GetPosition(),
+                robot_if.motors[FRHFE].GetVelocity());
+            // TODO write the errors in the csv
+            robot_if.motors[FRHFE].SetCurrentReference(cur);
+          }
+          if (robot_if.motors[FRK].IsEnabled()) {
+            double cur = k_mvt.getCurrentFromCons(
+                init_pos[FRK], 0, robot_if.motors[FRK].GetPosition(),
                 robot_if.motors[FRK].GetVelocity());
             // TODO write the errors in the csv
             robot_if.motors[FRK].SetCurrentReference(cur);
