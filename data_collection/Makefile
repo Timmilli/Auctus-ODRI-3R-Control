@@ -40,11 +40,15 @@ trajectory_following: trajectory_following.o ESPNOW_manager.o ESPNOW_types.o Lin
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/trajectory_following $(addprefix $(BUILD_DIR)/,$^) -pthread
 
+opti_track_test: opti_track_test.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/opti_track_test $(addprefix $(BUILD_DIR)/,$^) -pthread
+
 test: test.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/test $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-all: clear clean one_leg_control pid_optimization test trajectory_following
+all: clear clean one_leg_control pid_optimization test trajectory_following opti_track_test
 
 clean: 
 	#$(RM) -rf $(BUILD_DIR)
