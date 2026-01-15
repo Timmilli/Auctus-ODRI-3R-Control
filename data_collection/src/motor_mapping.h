@@ -9,11 +9,11 @@
 #define FLHFE 3
 #define FLK 2
 
-#define BRHAA 6
+#define BRHAA 7
 #define BRHFE 11
 #define BRK 10
 
-#define BLHAA 7
+#define BLHAA 6
 #define BLHFE 9
 #define BLK 8
 
