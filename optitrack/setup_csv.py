@@ -1,18 +1,23 @@
 import csv
+import numpy as np
 
-frames = []
 
-with open("data.csv", newline="") as f:
-    reader = csv.DictReader(f)
+def csv_to_list(csv_path):
+    frames = []
 
-    for row in reader:
-        frame = []
+    with open(csv_path, newline="") as f:
+        reader = csv.DictReader(f)
 
-        for i in range(1, 6):
-            frame.append([
-                float(row[f"X{i}"]),
-                float(row[f"Y{i}"]),
-                float(row[f"Z{i}"]),
-            ])
+        for row in reader:
+            frame = []
 
-        frames.append(frame)
+            for i in range(1, 6):
+                frame.append([
+                    float(row[f"X{i}"]),
+                    float(row[f"Y{i}"]),
+                    float(row[f"Z{i}"]),
+                ])
+
+            frames.append(frame)
+    frames = np.array(frames)
+    return frames

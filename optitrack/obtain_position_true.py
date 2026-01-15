@@ -1,10 +1,10 @@
 # Effector(x,y,z) Knee(x,y,z) Hip_1 (x,y,z) Hip_2 (x,y,z) Base(x,y,z)
 from typing import List
 
-Heffector = 1.0 #m
-Hhip2 = 1.0 #m
-H1 = 1.0 #m
-H2 = 1.0 #m
+Heffector = 0.035 #m
+Hhip2 = 0.030 #m
+H1 = 0.093 #m
+H2 = 0.055 #m
 
 # move space origin to the base
 def place_origin(points): #[Effector, Knee, Hip_1, Hip_2, Base]
@@ -34,10 +34,10 @@ def build_normal_vector(vectorA, vectorB):
 
 # use normal vector and known length do go from tracked ball position to articulations
 def correct_point_position(H1,H2,Heffector,Hhip2,normal_vector,points):
-    points[0] = points[0] - Heffector*normal_vector
-    points[1] = points[1] - H2*normal_vector
-    points[2] = points[2] - H1*normal_vector
-    points[3] = points[3] - Hhip2*normal_vector
+    points[0] = points[0] - [Heffector*x for x in normal_vector]
+    points[1] = points[1] - [H2*x for x in normal_vector]
+    points[2] = points[2] - [H1*x for x in normal_vector]
+    points[3] = points[3] - [Hhip2*x for x in normal_vector]
     return points
 
 # wrapping function for computing seen above
