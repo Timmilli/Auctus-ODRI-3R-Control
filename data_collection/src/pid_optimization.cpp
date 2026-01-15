@@ -10,11 +10,16 @@
 #include <unistd.h>
 
 #include "basic_mouvements.h"
+#include "csv_filler.h"
 #include "master_board_sdk/defines.h"
 #include "master_board_sdk/master_board_interface.h"
 #include "motor_mapping.h"
 
 #define N_SLAVES_CONTROLED 6
+void print_point(angular_point_t *p, char type[3]) {
+  printf("HAA_%s=%f, HFE_%s=%f, KNE_%s=%f\n", type, p->p_haa, type, p->p_hfe,
+         type, p->p_k);
+}
 
 int main(int argc, char **argv) {
   if (argc != 2) {
@@ -23,12 +28,11 @@ int main(int argc, char **argv) {
   }
 
   int cpt = 0;
-  double kp = 3.;
-  double kd = 0.05;
   double freq = 0.5;
   double iq_sat = 4.0;
   double amplitude = M_PI;
-  int cons = -10;
+  BasicMovement mvt(amplitude, freq, 25., 0.2, iq_sat);
+  double cons = 0.05;
   double max_t = 3.;
   double dt = 0.001;
   double t = 0;
@@ -66,15 +70,8 @@ int main(int argc, char **argv) {
     printf("Timeout while waiting for ack.\n");
   }
 
-  char filename[32];
-  time_t timestamp = time(&timestamp);
-  struct tm datetime = *localtime(&timestamp);
-  sprintf(filename, "%2d%2d%2d_%.3f_%.3f_%2d.csv\n", datetime.tm_hour,
-          datetime.tm_min, datetime.tm_sec, kp, kd, cons);
-
-  std::ofstream fd;
-  fd.open("filename.csv");
-  fd << "Time(s),Error\n";
+  CsvFiller csvfiller;
+  csvfiller.openFile();
 
   while ((!robot_if.IsTimeout()) && (t < max_t)) {
     if (((std::chrono::duration<double>)(std::chrono::system_clock::now() -
@@ -102,20 +99,13 @@ int main(int argc, char **argv) {
         }
         break;
       case 1:
-        if (t > 0.5) {
-          int i = FLK; // mapping in motor_mapping.h
+        int i = BRHAA; // mapping in motor_mapping.h
+        if ((t > 0.5) && (t < max_t)) {
           if (robot_if.motors[i].IsEnabled()) {
-            double p_ref = init_pos[i] + cons;
-            double v_ref = 0;
-            double p_err = p_ref - robot_if.motors[i].GetPosition();
-            double v_err = v_ref - robot_if.motors[i].GetVelocity();
-            double cur = kp * p_err + kd * v_err;
-            if (cur > iq_sat)
-              cur = iq_sat;
-            if (cur < -iq_sat)
-              cur = -iq_sat;
+            double cur = mvt.getCurrentFromCons(
+                init_pos[i], cons, robot_if.motors[i].GetPosition(),
+                robot_if.motors[i].GetVelocity(), csvfiller, t);
             robot_if.motors[i].SetCurrentReference(cur);
-            fd << t << "," << p_err << "\n";
           }
         }
         break;
@@ -142,6 +132,10 @@ int main(int argc, char **argv) {
 
         robot_if.PrintStats();
 
+        printf("\n\n");
+        printf("Current time: %f\n", t);
+        printf("\n\n");
+
         fflush(stdout);
       }
       robot_if.SendCommand(); // This will send the command packet
@@ -150,12 +144,12 @@ int main(int argc, char **argv) {
     }
   }
   if (t >= max_t) {
-    char *filename = "blabal";
+    char *filename = "filename";
     printf("Trajectory done. Data are in %s.\n", filename);
   } else {
     printf("Masterboard timeout detected. Either the masterboard has been shut "
            "down or there has been a connection issue with the cable/wifi.\n");
   }
-  fd.close();
+  csvfiller.closeFile();
   return 0;
 }
