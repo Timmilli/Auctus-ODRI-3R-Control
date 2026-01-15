@@ -5,6 +5,8 @@ EXAMPLE_DIR = $(MASTER_BOARD_SDK)/example
 SRC_DIR = $(MASTER_BOARD_SDK)/src
 INCLUDE_DIR = $(MASTER_BOARD_SDK)/include/
 
+DEPENDENCIES = ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o csv_filler.o
+
 CC = g++
 CFLAGS  = -g -Wall -std=c++11
 INCLUDES = -I $(INCLUDE_DIR)
@@ -28,23 +30,23 @@ default: all
 	pkg-config --atleast-version=3.1 catch2
 	$(CC) $(CFLAGS) $(INCLUDES) $(shell pkg-config --cflags catch2) -std=c++17 -o $(BUILD_DIR)/$@ -c $^
 
-one_leg_control: one_leg_control.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o
+one_leg_control: one_leg_control.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/one_leg_control $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-pid_optimization: pid_optimization.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o
+pid_optimization: pid_optimization.o  $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/pid_optimization $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-trajectory_following: trajectory_following.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+trajectory_following: trajectory_following.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/trajectory_following $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-opti_track_test: opti_track_test.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+opti_track_test: opti_track_test.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/opti_track_test $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-test: test.o ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o
+test: test.o ESPNOW_manager.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/test $(addprefix $(BUILD_DIR)/,$^) -pthread
 
