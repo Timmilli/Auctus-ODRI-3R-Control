@@ -1,4 +1,6 @@
+import csv
 import numpy as np
+
 
 def lerp(a: float, b: float, t: float) -> float:
     """
@@ -13,13 +15,15 @@ def lerp(a: float, b: float, t: float) -> float:
     return (1 - t) * a + t * b
 
 
-if __name__ == '__main__':
-    traj = np.array([[1, 1, 1], [1, 1.1, 1]]) # list of (x,y,z) vectors
+if __name__ == "__main__":
+    traj = np.array(
+        [[0.300, 0.030, 0.150], [0.0, 0.030, 0.450]]
+    )  # list of (x,y,z) vectors
     p0, p1 = traj
 
     freq = 500  # Hz
     dt = 1 / freq  # s
-    v_max = 0.01 # m/s
+    v_max = 0.01  # m/s
 
     d_travel = p1 - p0
     v_travel = np.linalg.norm(d_travel)
@@ -36,4 +40,9 @@ if __name__ == '__main__':
 
     else:
         points.append(p1)
+    points.append(p1)
     print(points)
+
+    with open("trajectory.csv", mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(points)
