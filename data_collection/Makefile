@@ -52,9 +52,9 @@ test: test.o $(DEPENDENCIES)
 
 eigen_test: 
 	mkdir -p $(BIN_DIR)
-	g++ -I eigen-5.0.0/ src/eigen_test.cpp -o bin/eigen_test
+	g++ -I eigen-5.0.0/ src/eigen_test.cpp -o bin/eigen_test src/mgi.cpp
 
-all: clear clean one_leg_control pid_optimization test trajectory_following opti_track_test
+all: clear clean one_leg_control pid_optimization test trajectory_following opti_track_test eigen_test
 
 clean: 
 	#$(RM) -rf $(BUILD_DIR)
