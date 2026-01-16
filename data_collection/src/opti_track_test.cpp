@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 
   int cpt = 0;
   double freq = 0.5;
-  double iq_sat = 1.0;
+  double iq_sat = 4.0;
   double amplitude = M_PI;
   double dt = 0.001;
   double t = 0;
@@ -71,10 +71,12 @@ int main(int argc, char **argv) {
   }
 
   CsvFiller csvfiller;
+  csvfiller.openFile();
+  csvfiller.writeString("Configuration to go: (5, -10, -10)\n");
 
-  BasicMovement haa_mvt(amplitude, freq, 6, 0.05, iq_sat);
-  BasicMovement hfe_mvt(amplitude, freq, 5, 0.05, iq_sat);
-  BasicMovement k_mvt(amplitude, freq, 3, 0.05, iq_sat);
+  BasicMovement haa_mvt(amplitude, freq, 5., 0.05, iq_sat);
+  BasicMovement hfe_mvt(amplitude, freq, 5., 0.05, iq_sat);
+  BasicMovement k_mvt(amplitude, freq, 5., 0.05, iq_sat);
 
   angular_point_t obj = {.p_haa = 5, .p_hfe = -10, .p_k = -10};
 
@@ -105,17 +107,12 @@ int main(int argc, char **argv) {
         }
         break;
       case 1:
-        angular_point_t current_position = {
-            .p_haa = robot_if.motors[FRHAA].GetPosition() - init_pos[FRHAA],
-            .p_hfe = robot_if.motors[FRHFE].GetPosition() - init_pos[FRHFE],
-            .p_k = robot_if.motors[FRK].GetPosition() - init_pos[FRK]};
         if (t > 2) {
           if (robot_if.motors[FRHAA].IsEnabled()) {
             double cur = haa_mvt.getCurrentFromCons(
                 init_pos[FRHAA], obj.p_haa,
                 robot_if.motors[FRHAA].GetPosition(),
                 robot_if.motors[FRHAA].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRHAA].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRHFE].IsEnabled()) {
@@ -123,14 +120,12 @@ int main(int argc, char **argv) {
                 init_pos[FRHFE], obj.p_hfe,
                 robot_if.motors[FRHFE].GetPosition(),
                 robot_if.motors[FRHFE].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRHFE].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRK].IsEnabled()) {
             double cur = k_mvt.getCurrentFromCons(
                 init_pos[FRK], obj.p_k, robot_if.motors[FRK].GetPosition(),
                 robot_if.motors[FRK].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRK].SetCurrentReference(cur);
           }
         } else if (t > 1) {
@@ -138,21 +133,18 @@ int main(int argc, char **argv) {
             double cur = haa_mvt.getCurrentFromCons(
                 init_pos[FRHAA], 0, robot_if.motors[FRHAA].GetPosition(),
                 robot_if.motors[FRHAA].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRHAA].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRHFE].IsEnabled()) {
             double cur = hfe_mvt.getCurrentFromCons(
                 init_pos[FRHFE], 0, robot_if.motors[FRHFE].GetPosition(),
                 robot_if.motors[FRHFE].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRHFE].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRK].IsEnabled()) {
             double cur = k_mvt.getCurrentFromCons(
                 init_pos[FRK], 0, robot_if.motors[FRK].GetPosition(),
                 robot_if.motors[FRK].GetVelocity(), csvfiller, t);
-            // TODO write the errors in the csv
             robot_if.motors[FRK].SetCurrentReference(cur);
           }
         }
@@ -180,20 +172,8 @@ int main(int argc, char **argv) {
 
         robot_if.PrintStats();
 
-        angular_point_t cur = {.p_haa = robot_if.motors[FRHAA].GetPosition(),
-                               .p_hfe = robot_if.motors[FRHFE].GetPosition(),
-                               .p_k = robot_if.motors[FRK].GetPosition()};
-
         printf("\n\n");
         printf("Current time: %f\n", t);
-        printf("HAA_ini=%f, HFE_ini=%f, KNE_ini=%f\n", init_pos[FRHAA],
-               init_pos[FRHFE], init_pos[FRK]);
-        print_point(&obj, "obj");
-        print_point(&cur, "cur");
-        printf("HAA_err=%f, HFE_err=%f, KNE_err=%f\n",
-               fabs(cur.p_haa - init_pos[FRHAA] - obj.p_haa),
-               fabs(cur.p_hfe - init_pos[FRHFE] - obj.p_hfe),
-               fabs(cur.p_k - init_pos[FRK] - obj.p_k));
         printf("\n\n");
 
         fflush(stdout);
