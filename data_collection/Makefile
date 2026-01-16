@@ -9,7 +9,7 @@ DEPENDENCIES = ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o m
 
 CC = g++
 CFLAGS  = -g -Wall -std=c++11
-INCLUDES = -I $(INCLUDE_DIR)
+INCLUDES = -I $(INCLUDE_DIR) -I eigen-5.0.0/
 
 default: all
 
@@ -46,9 +46,13 @@ opti_track_test: opti_track_test.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/opti_track_test $(addprefix $(BUILD_DIR)/,$^) -pthread
 
-test: test.o ESPNOW_manager.o $(DEPENDENCIES)
+test: test.o $(DEPENDENCIES)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/test $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+eigen_test: 
+	mkdir -p $(BIN_DIR)
+	g++ -I eigen-5.0.0/ src/eigen_test.cpp -o bin/eigen_test
 
 all: clear clean one_leg_control pid_optimization test trajectory_following opti_track_test
 
