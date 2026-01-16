@@ -70,9 +70,7 @@ int main(int argc, char **argv) {
     printf("Timeout while waiting for ack.\n");
   }
 
-  std::ofstream fd;
-  fd.open("filename.csv");
-  fd << "Time(s),Error\n";
+  CsvFiller csvfiller;
 
   BasicMovement haa_mvt(amplitude, freq, 6, 0.05, iq_sat);
   BasicMovement hfe_mvt(amplitude, freq, 5, 0.05, iq_sat);
@@ -116,7 +114,7 @@ int main(int argc, char **argv) {
             double cur = haa_mvt.getCurrentFromCons(
                 init_pos[FRHAA], obj.p_haa,
                 robot_if.motors[FRHAA].GetPosition(),
-                robot_if.motors[FRHAA].GetVelocity());
+                robot_if.motors[FRHAA].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRHAA].SetCurrentReference(cur);
           }
@@ -124,14 +122,14 @@ int main(int argc, char **argv) {
             double cur = hfe_mvt.getCurrentFromCons(
                 init_pos[FRHFE], obj.p_hfe,
                 robot_if.motors[FRHFE].GetPosition(),
-                robot_if.motors[FRHFE].GetVelocity());
+                robot_if.motors[FRHFE].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRHFE].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRK].IsEnabled()) {
             double cur = k_mvt.getCurrentFromCons(
                 init_pos[FRK], obj.p_k, robot_if.motors[FRK].GetPosition(),
-                robot_if.motors[FRK].GetVelocity());
+                robot_if.motors[FRK].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRK].SetCurrentReference(cur);
           }
@@ -139,21 +137,21 @@ int main(int argc, char **argv) {
           if (robot_if.motors[FRHAA].IsEnabled()) {
             double cur = haa_mvt.getCurrentFromCons(
                 init_pos[FRHAA], 0, robot_if.motors[FRHAA].GetPosition(),
-                robot_if.motors[FRHAA].GetVelocity());
+                robot_if.motors[FRHAA].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRHAA].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRHFE].IsEnabled()) {
             double cur = hfe_mvt.getCurrentFromCons(
                 init_pos[FRHFE], 0, robot_if.motors[FRHFE].GetPosition(),
-                robot_if.motors[FRHFE].GetVelocity());
+                robot_if.motors[FRHFE].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRHFE].SetCurrentReference(cur);
           }
           if (robot_if.motors[FRK].IsEnabled()) {
             double cur = k_mvt.getCurrentFromCons(
                 init_pos[FRK], 0, robot_if.motors[FRK].GetPosition(),
-                robot_if.motors[FRK].GetVelocity());
+                robot_if.motors[FRK].GetVelocity(), csvfiller, t);
             // TODO write the errors in the csv
             robot_if.motors[FRK].SetCurrentReference(cur);
           }
@@ -208,6 +206,6 @@ int main(int argc, char **argv) {
   printf("Masterboard timeout detected. Either the masterboard has been shut "
          "down or there has been a connection issue with the cable/wifi.\n");
 
-  fd.close();
+  csvfiller.closeFile();
   return 0;
 }
