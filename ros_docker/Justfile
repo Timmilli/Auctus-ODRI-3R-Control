@@ -11,6 +11,6 @@ run:
 		--env DISPLAY=$DISPLAY \
 		--env QT_X11_NO_MITSHM=1 \
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \
-		--volume ../../repo/:/odri \
+		--volume ../:/odri \
 		--privileged \
 		leg12dof:gpu
