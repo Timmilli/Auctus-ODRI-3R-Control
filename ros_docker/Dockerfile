@@ -1,39 +1,22 @@
-FROM osrf/ros:humble-desktop
+FROM ubuntu:22.04
 
-# Install Gazebo + ROS tools
-RUN apt-get update && apt-get install -y \
-   	build-essential \
-		binutils \
-		gcc \
-		g++ \
-    ros-humble-gazebo-ros-pkgs \
-    ros-humble-gazebo-ros2-control \
-    ros-humble-ros2-control \
-    ros-humble-ros2-controllers \
-    ros-humble-xacro \
-    python3-colcon-common-extensions \
-    vim \
-    net-tools \
-    git \
-    wget \
-    gperf \
-    python3 \
-    python3-pip \
-    python3-setuptools \
-    cmake \
-    ccache \
-    libffi-dev \
-    libssl-dev \
-    dfu-util 
+RUN apt update && apt install -y curl python-is-python3 python3-pip cmake zip git \
+	autoconf autoconf-archive automake libtool vim pkg-config catch2 \
+        libboost-all-dev libyaml-cpp-dev
 
-RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3 10
+# install colcon
+RUN python3 -m pip install -U colcon-common-extensions
 
-# Create workspace
-WORKDIR /odri
+# install eigenpy
+RUN curl http://robotpkg.openrobots.org/packages/debian/robotpkg.asc | tee /etc/apt/keyrings/robotpkg.asc
+RUN tee /etc/apt/sources.list.d/robotpkg.list <<EOF
+deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub jammy robotpkg
+EOF
+RUN apt-get update && apt-get install -y robotpkg-py310-eigenpy
 
-# Source ROS automatically
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+ENV CMAKE_PREFIX_PATH=/opt/openrobots
+ENV LD_LIBRARY_PATH=/opt/openrobots/lib
+ENV PYTHONPATH=/opt/openrobots/lib/python3.10/site-packages
 
-CMD ["bash"]
-
-
+WORKDIR /odri/data_collection
+RUN colcon build
