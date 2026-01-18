@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
-
+DATA_FILE="filename.csv"
 
 def main():
     i = 0
     t, err = np.array([]), np.array([])
-    with open("filename.csv", newline="") as csvfile:
+    with open(DATA_FILE, newline="") as csvfile:
         file = csv.reader(csvfile, delimiter=",")
         for row in file:
             i += 1
