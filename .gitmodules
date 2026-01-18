@@ -1,9 +1,9 @@
-[submodule "ros_docker/master-board"]
-	path = ros_docker/master-board
+[submodule "data_collection/master-board"]
+	path = data_collection/master-board
 	url = https://github.com/open-dynamic-robot-initiative/master-board.git
-[submodule "ros_docker/odri_control_interface"]
-	path = ros_docker/odri_control_interface
+[submodule "data_collection/odri_control_interface"]
+	path = data_collection/odri_control_interface
 	url = https://github.com/open-dynamic-robot-initiative/odri_control_interface.git
-[submodule "ros_docker/example-robot-data"]
-	path = ros_docker/example-robot-data
-	url = https://github.com/Gepetto/example-robot-data.git
+[submodule "data_collection/eigen-5.0.0"]
+	path = data_collection/eigen-5.0.0
+	url = https://gitlab.com/libeigen/eigen.git

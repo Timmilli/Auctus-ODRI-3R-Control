@@ -1,0 +1,64 @@
+MASTER_BOARD_SDK = master-board/sdk/master_board_sdk
+BUILD_DIR = $(MASTER_BOARD_SDK)/build
+BIN_DIR = bin
+EXAMPLE_DIR = $(MASTER_BOARD_SDK)/example
+SRC_DIR = $(MASTER_BOARD_SDK)/src
+INCLUDE_DIR = $(MASTER_BOARD_SDK)/include/
+
+DEPENDENCIES = ESPNOW_manager.o ESPNOW_types.o Link_manager.o ETHERNET_types.o master_board_interface.o motor.o motor_driver.o basic_mouvements.o trajectory_generator.o csv_filler.o
+
+CC = g++
+CFLAGS  = -g -Wall -std=c++11
+INCLUDES = -I $(INCLUDE_DIR) -I eigen-5.0.0/
+
+default: all
+
+%.o: $(EXAMPLE_DIR)/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$@ -c $^
+
+%.o: src/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$@ -c $^
+
+%.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$@ -c $^
+
+%.o: tests/%.cpp
+	mkdir -p $(BUILD_DIR)
+	pkg-config --atleast-version=3.1 catch2
+	$(CC) $(CFLAGS) $(INCLUDES) $(shell pkg-config --cflags catch2) -std=c++17 -o $(BUILD_DIR)/$@ -c $^
+
+one_leg_control: one_leg_control.o $(DEPENDENCIES)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/one_leg_control $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+pid_optimization: pid_optimization.o  $(DEPENDENCIES)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/pid_optimization $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+trajectory_following: trajectory_following.o $(DEPENDENCIES)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/trajectory_following $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+opti_track_test: opti_track_test.o $(DEPENDENCIES)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/opti_track_test $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+test: test.o $(DEPENDENCIES)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/test $(addprefix $(BUILD_DIR)/,$^) -pthread
+
+eigen_test: 
+	mkdir -p $(BIN_DIR)
+	g++ -I eigen-5.0.0/ src/eigen_test.cpp -o bin/eigen_test src/mgi.cpp
+
+all: clear clean one_leg_control pid_optimization test trajectory_following opti_track_test eigen_test
+
+clean: 
+	#$(RM) -rf $(BUILD_DIR)
+	$(RM) -rf $(BIN_DIR)
+
+clear:
+	clear
