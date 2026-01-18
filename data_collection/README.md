@@ -1,4 +1,5 @@
-# Récupération de données du robot
+# Récupération de données du robot
+
 Ce répertoire se sépare en deux parties :
 - les *sub-modules* utilisés provenant du projet ODRI original
 - les fichiers de code utilisant le `master-board-sdk` pour piloter le robot
@@ -7,10 +8,12 @@ Les deux sub-modules sont celui de la carte électronique principale et de
 l'interface de contrôle du robot.
 
 ## Fichiers de code personnels
+
 Les dossiers `src/` et `srcpy/` contiennent du code écrit par nous avec certains
 morceaux directement repris du projet ODRI. 
 
 ### `srcpy/`
+
 Le script `trajectory.py` permet de générer une liste de points par
 interpolation linéaire, à partir d'une vitesse maximale et d'une fréquence de
 communication avec le robot. Ce script prend en entrées une liste
@@ -25,7 +28,6 @@ vitesse maximale.
 Les points sont inscrits dans le code, et à l'exécution, le script génère un
 fichier .csv avec les points générés.
 
-
 Le script `pid_study.py` ouvre un fichier produit par le binaire
 `pid_optimization`, et génère un graphique afin de visualiser l'erreur de la
 commande envoyée au fil du temps, qu'on utilise pour adapter les coefficients
@@ -33,7 +35,13 @@ du contrôleur PID. Le nom de fichier est à renseigner dans le code.
 
 ### `src/`
 
+La grande partie des fichiers `.cpp` se base sur l'[exemple](./master-board/sdk/master_board_sdk/example/example.cpp) qui permet de contrôler en courant les 12 moteurs.
+À partir de cette base, le fichier [`pid_optimization`](./src/pid_optimization.cpp) permet de régler manuellement le correcteur PD de chaque moteur indépendamment.
+
+Le fichier annexe, [`motor_mapping.h`](./src/motor_mapping.h), apporte une clarification des ID des moteurs.
+
 ## Sub-modules du projet ODRI
+
 En parallèle, les modules `master-board` et `odri_control_interface`. L'objectif
 était d'utiliser l'interface de contrôle fournie par le projet ODRI afin de
 profiter de ses fonctionnalités (calibration des zéros, inversion des phases..).
