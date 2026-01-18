@@ -33,37 +33,15 @@ If this is written in user or dev docs, provide links.
 | ⚖️ **License**               |  [TODO]
 | 👨‍👨‍👦 **Authors**               |  Thomas Wanchai **Menier**, Quentin **Fallito**, Guénaël **Roger**    |
 
-## Bot description
+## Organisation
 
-With the master board at the back of the robot, the motors are indexed accordingly:
+This project is divided in 5 parts as described below
 
-| Position | Side | Joint | Index |
-|---|---|---|---|
-| F | R | HAA | 0 |
-| F | R | HFE | 11 |
-| F | R | K | 9 (not sure) |
-| F | L | HAA | 1 |
-| F | L | HFE | 3 |
-| F | L | K | 2  |
-| B | R | HAA | ? |
-| B | R | HFE | ? |
-| B | R | K | ?  |
-| B | L | HAA | ? |
-| B | L | HFE | ? |
-| B | L | K | ? |
-
-# ROS2 Docker
-
-Directory already setup up to use a Docker with ROS2. See according [README](./ros_docker/README.md)
-
-# Pinocchio
-
-Directory to use Pinocchio. Environment can be setup up via Conda and the `environment.yml` file. See according [README](./Pinocchio/README.md).
-
-# Matlab
-
-Directory containing Matlab code about the dynamics of the robot. See according [README](./Matlab/README.md)
-
+- **data_collection**: directory to control the bot. See accordinng [README](./data_collection/README.md).
+- **ros_docker**: directory already setup up to use a Docker with ROS2. See according [README](./ros_docker/README.md)
+- **pinocchio**: directory to use Pinocchio. Environment can be setup up via Conda and the `environment.yml` file. See according [README](./Pinocchio/README.md).
+- **Matlab**: directory containing Matlab code about the dynamics of the robot. See according [README](./Matlab/README.md)
+- **docs**: directory with more informations about the bot. See according [directory](./docs/)
 
 # License
 
