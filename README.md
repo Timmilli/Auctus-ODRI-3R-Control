@@ -2,10 +2,6 @@
 
 Based on the ODRI [TODO link] quadruped bot, this project aims to perfect the modeling and the control of one paw.
 
-<p align="center">
-    <img alt='gif of the bot'
-         src='images/logo_auctus.png' />
-</p> <!-- TODO-->
 
 ## 📄 This project in short
 
@@ -27,3 +23,12 @@ Installation procedures are available in each README.md from which installation 
 |:----------------------------:|:-----------------------------------------------------------------------:|
 | 💼 **Client**                |  AUCTUS
 | 👨‍👨‍👦 **Authors**               |  Thomas Wanchai **Menier**, Quentin **Fallito**, Guénaël **Roger**    |
+
+<p align="center">
+    <img alt='auctus logo'
+         src='images/logo_auctus.png'
+         height=70px/>
+    <img alt='emmk logo'
+         src='images/logo_em.jpg'
+         height=70px />
+</p>
