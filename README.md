@@ -9,30 +9,6 @@ Based on the ODRI [TODO link] quadruped bot, this project aims to perfect the mo
 
 ## 📄 This project in short
 
-This paragraph is for the visitors who fly over your work and cannot read the whole documentation. They dislike long texts.
-
-Be **concise** and **convincing** to show the potential of your project. Be **honest** and list the limitations.  
-
-* The context and the intented users
-* The problems solved by your project
-* How it solves them
-
-## 🚀 Quickstart (if relevant)
-
-* **Install instructions**: List of software/hardware dependencies, and instructions to install them if relevant
-* **Launch instructions**: Few lines of code to launch the main feature of your project
-
-If this is written in user or dev docs, provide links.
-
-## 🔍 About this project
-
-|       |        |
-|:----------------------------:|:-----------------------------------------------------------------------:|
-| 💼 **Client**                |  AUCTUS
-| 👨‍👨‍👦 **Authors**               |  Thomas Wanchai **Menier**, Quentin **Fallito**, Guénaël **Roger**    |
-
-## Organisation
-
 This project is divided in 5 parts as described below
 
 - **data_collection**: directory to control the bot. See according [README](./data_collection/README.md).
@@ -41,15 +17,13 @@ This project is divided in 5 parts as described below
 - **Matlab**: directory containing Matlab code about the dynamics of the robot. See according [README](./Matlab/README.md)
 - **docs**: directory with more informations about the bot. See according [directory](./docs/)
 
-# License
+## 🚀 Quickstart
 
-[TODO]
+Installation procedures are available in each README.md from which installation is necessary (Docker, Pinocchio...).
 
-<p align="center">
-    <img alt='auctus logo'
-         src='images/logo_auctus.png' 
-         height=70/>
-    <img alt='emmk_logo'
-         src='images/logo_em.jpg'
-         height=70/>
-</p>
+## 🔍 About this project
+
+|       |        |
+|:----------------------------:|:-----------------------------------------------------------------------:|
+| 💼 **Client**                |  AUCTUS
+| 👨‍👨‍👦 **Authors**               |  Thomas Wanchai **Menier**, Quentin **Fallito**, Guénaël **Roger**    |
