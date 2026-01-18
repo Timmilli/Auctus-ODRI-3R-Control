@@ -28,3 +28,10 @@ To run the container:
 ```bash
 just run
 ```
+
+Inside the container, remember to source the workspace created by colcon to have
+the Python3 package it built
+
+```bash
+. install/setup.bash
+```
