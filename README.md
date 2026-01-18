@@ -1,6 +1,6 @@
 # Modeling and control of a 3R bot
 
-Based on the ODRI [TODO link] quadruped bot, this project aims to perfect the modeling and the control of one paw.
+Based on the [ODRI](https://github.com/open-dynamic-robot-initiative) quadruped bot, this project aims to perfect the modeling and the control of one paw.
 
 
 ## 📄 This project in short
