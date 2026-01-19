@@ -1,6 +1,3 @@
-# Auctus ODRI dynamic control
+# Matlab code
 
-## Authors
-- Quentin Fallito
-- Guénaël Roger
-- Thomas Wanchai MENIER
+This directory contains the Matlab code to run the math of the bot.
