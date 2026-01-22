@@ -1,0 +1,141 @@
+\chapter{Architecture matérielle et modélisation du robot 3R}
+
+Le prototype décrit en introduction est un bras robotique 3R. De tels bras sont souvent utilisés afin de faire ou d'aider un opérateur à faire de la manipulation d'objets. Dans cette objectif, il est important de dimensionner ce bras en fonction de la tâche à réaliser.
+
+Un robot 3R fait partie de la famille des robots 3DOF (degré de liberté) où les degré de liberté sont des rotations. Le bras est une chaîne cinématique ouverte, chaque rotations permises par les articulations permettent de positionner le dernier segment de la chaine dans l'espace.
+Cependant, et contrairement à un bras plus complexe comme un UR, l'effecteur ne peux pas être orienté dans l'espace librement, seule sa position est contrôlable.
+
+\section{Hardware}
+
+Le prototype se base sur le ODRI (Open Dynamic Robot Initiative) \cite{grimminger2020open}, nous allons donc nous intéresser particulièrement aux organes nécessaires à son bon fonctionnement.
+
+\subsection{Drivers \& Moteurs}
+
+La motorisation est assurée par trois moteurs brushless contrôlés par un driver, aussi appelé \emph{Electronic Speed Controller} (ESC), communiquant en SPI avec l'étage de contrôle (microcontrôleur ESP32).
+
+Un moteur brushless est constitué d’un stator comportant plusieurs bobines organisées en pôles électromagnétiques et d’un rotor portant des aimants permanents, eux aussi répartis en pôles. Lorsque le moteur fonctionne, l’ESC envoie une séquence d’impulsions électriques triphasées dans les bobines du stator, créant un champ magnétique tournant dont les pôles changent en permanence.
+Le rotor, qui possède ses propres pôles aimantés, s’aligne constamment sur ce champ tournant, ce qui provoque sa rotation.
+L’ESC détecte la position du rotor soit en mesurant les tensions de retour des bobinages (back-EMF), soit grâce à des capteurs Hall, puis ajuste la commutation des phases pour synchroniser précisément le champ du stator avec la position des pôles du rotor.
+En modifiant la fréquence de commutation, l’ESC contrôle la vitesse, et en modulant la largeur des impulsions par une PWM, il contrôle le couple.
+Grâce à cette commutation électronique sans frottement, le moteur brushless offre un fonctionnement plus efficace, durable et précis que les moteurs à balais.
+
+La transmission des efforts jusqu'aux articulations est assurée par des systèmes de poulie-courroie, et l'utilisation de guides en rotation (roulements à bille) limite les efforts radiaux et réduit les frottements.
+
+\subsection{Capteurs}
+
+Pour un contrôle précis du robot, il est nécessaire pour l'automate de connaître ses actions et son environnement.
+Pour ce faire, il est faut pouvoir mesurer les actions du robot à l'aide de capteurs.
+On retrouve toute une flopée de capteurs qui permettent d'aider au contrôle.
+
+Pour mesurer le déplacement de chaque élément du robot, on peut utiliser une caméra pour observer l'entièreté du bras ou on peut mesurer les actionneurs et, à partir de la loi géométrique associé a l'architecture du robot, il est possible de reconstruire la position de chaque segment.
+Contrairement à une caméra extérieurs, ces capteurs ont l'avantage d'être embarqués sur le robot.
+Parmi les plus commun, on retrouve les potentiomètres (mesure de résistance), les capteurs à effet hall (mesure de champ magnétique) et les encodeuses optiques.
+
+Sur notre bras, on retrouve des encodeuses optiques à 3 bandes similaires à la figure~\ref{fig:encodeuse}.
+Chaque bande est percée régulièrement pour permettre à un laser d'illuminer un capteur optique, où deux "impulsions" successive correspondent à un angle spécifié dans la datasheet.
+Les deux premières bandes (voies A et B) permettent de connaître le sens de rotation de l'encodeuse la troisième (voie Z) identifie un tour entier.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{codeurs_incrementaux_2.png}
+	\caption{Schéma descriptif d'une roue codeuse}
+	\label{fig:encodeuse}
+\end{figure}
+
+De nombreux capteurs peuvent être rajoutés à ce type de bras afin d'augmenter la connaissance des mouvements et d'augmenter la sécurité de l'emploi, comme des capteurs de couple.
+Ici, les possibilités sont plus restreintes.
+On peut soit mesurer physiquement le couple de chaque actionneurs à l'aide de jauges de déformations, mais ces jauges limitent grandement l'amplitude des mouvements, soit mesurer le courant consommé par les actionneurs, qui permet d'obtenir une image du couple développé.
+
+Au vue de la contrainte posée par les jauges de déformations, on considère aussi que notre bras est équipé de capteurs de courant.
+Or, n'ayant pas directement de tel capteur et comme mesurer un courant est très peu fiable car soumis facilement à du bruit, on considère que le courant envoyé par les drivers des moteurs est celui actuellement reçu par les moteurs. Des boucles d'asservissement en courant pourront donc être mises en place en utilisant cette mesure.
+
+\subsection{Modèle des actionneurs}
+
+Le composant principal d'un actionneur est le moteur qui fourni la force motrice au reste du système.
+
+Les deux principaux type de moteur sont les moteurs DC et les moteurs brushless.
+Le premier type converti une tension continue en énergie mécanique, le second nécessite un ESC pour distribuer le courant d'alimentation aux bonnes bobines au bon moment. Bien que différent dans son architecture, il est possible de lui trouvé un modèle équivalent à un moteur DC comme illustré dans ce passage de cours \cite{brushless32}, ainsi les identifications classiques sont applicables.
+
+L'encombrement d'un moteur et de capteur sur l'axe de mouvement du segment peut entraîner des contraintes (dimensions des segments, amplitude de mouvement etc.).
+C'est pourquoi une solution est souvent de déporter la motorisation à l'aide d'une chaîne de transmission. Dans le cas de notre prototype se trouve un système poulie-courroie, les chaînes de transmissions sont souvent assimilé à un facteur d'efficacité de transmission (pertes énergétiques).
+
+%\begin{figure}[htbp]
+%    \centering
+%\includegraphics[width=\textwidth]{img/bldc.png}
+%    \caption{Schéma descriptif d'un moteur brushless}
+%    \label{fig:bldc}
+%\end{figure}
+
+\section{Modélisation mathématique}
+
+Afin de pouvoir contrôler un bras 3R de la manière la plus précise possible, il est primordiale de modéliser le plus parfaitement possible celui-ci.
+Pour cela, on s'intéresse au modèle de l'actionneur, et aux modèles cinématique et dynamique du bras afin de pouvoir prendre en compte l'impact de la mécanique et des efforts extérieurs.
+
+% \subsection{Modèle de l'actionneur}
+
+% On va avoir une remarque sur le manque de cette partie. Mais tant pis.
+
+\subsection{Modèle cinématique du bras}
+
+%\begin{itemize}
+%%    \item definition des besoins du modele (parametres à identifier)
+%%    \item utilité dans le projet
+%    \item \emph{Modern Robotics} chapter 4, 5, 6 \& 7
+%    \item \emph{Robotics} chapter 2 \& 3
+%\end{itemize}
+
+Le modèle cinématique permet de lier la vitesse du bras avec la vitesse des moteurs grâce aux mesures des capteurs liés aux moteurs et aux paramètres géométriques du bras.
+
+Cette modélisation peut être découpée en deux : un modèle direct et un modèle inverse. Le modèle directe, qui permet de calculer la position de l'outil en fonction des angles articulaires, est utilisé pour asservir le bras. Le modèle inverse, qui permet donc de calculer les angles articulaires en fonction d'une position de l'outil, est lui utilisé pour transmettre une consigne de contrôle.
+
+Ce modèle demande une connaissance précise des dimensions de chaque segment du bras. Il est ensuite possible d'utiliser le formalisme de Denavit-Hartenberg (\cite[Chapter 4.5]{MODERNROBOTICS} afin d'obtenir notre modèle direct. Une inversion du système par une méthode de régression permet ainsi de fabriqué le modèle inverse \cite{ygorra}.
+
+\subsection{Modèle dynamique du bras}
+
+%\begin{itemize} % paramètres inertielles
+%    \item definition, estimation, necessité
+%    \item \emph{Modern Robotics} chapter 8
+%    \item \emph{Robotics} chapter 7
+%\end{itemize}
+
+%Une fois la modélisation cinématique effectué, on peut pousser la précision du modèle plus loin en prenant en compte les masses et centres d'inertie des 3 membres du bras. Ceci permet de compenser les effets liés au mouvement du bras.
+
+%\begin{itemize} % dynamique
+%    \item qu'est ce que le modele apporte comparer au modele cinematique
+%    \item \emph{Modern Robotics} chapter 8
+%    \item \emph{Robotics} chapter 7
+%\end{itemize}
+
+Pour finaliser le modèle, l'ajout de l'impact des forces extérieurs permet de prendre en compte le mouvement du bras. Ces forces extérieures sont composées des forces de frottement secs et visqueux, de la gravité ainsi que des forces centrifuges et Coriolis.
+Ce modèle demande d'identifier beaucoup plus de termes (efforts mécaniques internes et externes) mais il a l'avantage de fournir les couples à fournir pour que l'actionneur réagisse exactement comme souhaité, là où le modèle cinématique ne fourni que des vitesse.
+Une telle modélisation peut être mise sous la forme de l'équation \ref{eq:dynamique} avec le formalisme de Lagrange (tirée de \cite[Chapter~7]{siciliano2009robotics}).
+
+\begin{equation}
+	\boldsymbol{B(q)\ddot{q}} + \boldsymbol{C(q, \dot{q})\dot{q}} + \boldsymbol{F_v\dot{q}} + \boldsymbol{F_s} sgn(\boldsymbol{\dot{q}}) + \boldsymbol{G(q)} = \boldsymbol{\tau} - \boldsymbol{J}^T(\boldsymbol{q})\boldsymbol{h_e}
+	\label{eq:dynamique}
+\end{equation}
+
+\noindent où $\boldsymbol{B}$ regroupe les moments d'inertie et les effets de l'accélération, $\boldsymbol{C}$ les effets des forces centrifuges et Coriolis, $\boldsymbol{F_v\dot{q}}$ les frottements visqueux, $\boldsymbol{F_s} sgn(\dot{\boldsymbol{q}})$ les frottements secs, $\boldsymbol{G}$ la gravité, $\boldsymbol{\tau}$ les couples moteurs et $\boldsymbol{h_e}$ les forces et moments générés par l'outil.
+
+\vspace{5\baselineskip}
+
+
+\begin{tabular}{cl}
+	\toprule
+	$\boldsymbol{B}$                                   & inertia and acceleration        \\
+	$\boldsymbol{C}$                                   & centrifugal and Coriolis forces \\
+	$\boldsymbol{F_v\dot{q}}$                          & viscous friction force          \\
+	$\boldsymbol{F_s}sgn(\boldsymbol{\dot{q}})$        & dry friction force              \\
+	$\boldsymbol{G}$                                   & gravitational force             \\
+	$\boldsymbol{\tau}$                                & torques                         \\
+	$\boldsymbol{J}^T(\boldsymbol{q})\boldsymbol{h_e}$ & end-effector force              \\
+	\bottomrule
+\end{tabular}
+
+\begin{equation}
+	\boldsymbol{q}, \boldsymbol{\dot{q}}, \boldsymbol{\ddot{q}}
+\end{equation}
+
+\begin{equation}
+	\boldsymbol{F_v} , \boldsymbol{F_s}
+\end{equation}

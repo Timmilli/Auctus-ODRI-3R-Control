@@ -1,0 +1,82 @@
+\chapter{Contrôle d'un robot 3R}
+
+L'objectif étant de pouvoir contrôler l'entièreté de la patte avec la plus grande précision possible, cette section décrit les différentes étapes pour arriver à un contrôle fin de notre système. Le contrôle du robot se sépare en deux parties : l'asservissement des moteurs, et l'asservissement du système entier. Dans le cas étudié, les moteurs utilisés sont des moteurs sans balais à courant continu (ou moteurs BLDC). Les techniques d'asservissement générales seront présentées, avec une focalisation sur l'asservissement de ce type de moteur. La seconde partie viendra décrire des méthodes générales qui s'appliquent dans le monde continu et le monde discret. Cette section se concentrera sur des boucles de contrôles fermées, avec un retour du système grâce aux capteurs disponibles sur le robot utilisé. Les boucles de contrôle ouvertes sont en général moins efficaces pour un contrôle précis.
+
+% Deux grandes sections :
+% - Écriture de loi de commande pour asservissement du système complet
+%   - Modélisation couplée et découplée
+% - Asservissement d'un moteur précis
+
+\section{Asservissement d'un moteur BLDC}
+
+Dans le modèle dynamique général présenté dans l'équation \ref{eq:dynamique}, les forces qui entrent en action dépendent de l'accélération, la vitesse et la position des moteurs. Afin de pouvoir contrôler ces grandeurs physiques dans chacun des moteurs, il est nécessaire de contrôler le courant envoyé. Le robot ODRI utilisé dans ce projet propose des drivers open-source afin de contrôler ces derniers.
+
+\subsection{Contrôleur PID}
+
+La technique la plus courante pour diriger un système est d'utiliser un contrôleur proportionnel intégral et dérivée. Apparu pour la première fois en 1922 \cite{pid_early_years}, il est resté comme la méthode par défaut afin de contrôler un système, quelconque soit-il. Ce choix très populaire s'explique par sa simplicité de modélisation. 
+La formulation d'un contrôleur PID peut être :
+
+\begin{equation}
+    K_p * e(t) + K_i * \int_{0}^{t} e(t) dt + K_d \frac{d\ e(t)}{dt},
+    \label{eq:pid}
+\end{equation}
+
+où $e(t)$ est l'erreur entre l'état actuel du système et l'état desiré.
+Les différents coefficients de ce contrôleur sont $K_p$, $K_i$ et $K_d$, respectivement le coefficient proportionnel, intégral et dérivatif. L'identification des valeurs optimales de ces paramètres peut se faire en essayant certaines valeurs, mais il existe des méthodes d'identification comme la méthode de Ziegler-Nichols \cite{zieg_nichols_pid}, ou encore la méthode de Cohen-Coon. Avec des paramètres identifiés, et l'utilisation des capteurs incrémentaux disponibles sur le robot, un contrôleur PID suffit donc pour contrôler avec précision la vitesse d'un moteur. 
+
+Il existe une alternative aux contrôleurs PID, appelés les \emph{Fuzzy-logic controllers} qui donnent de meilleurs résultats d'après \textcite{fuzzy_ctrl}. Cette alternative pourrait être explorée si les résultats obtenus avec les contrôleurs PID ne sont pas à la hauteur de notre objectif.
+
+\subsection{Field-Oriented Control}
+
+Une idée simple serait d'utiliser un contrôleur PID pour modifier le courant émis dans le moteur \cite{MDMAHMUD2022}. Les drivers du robot ODRI utilisé implémentent l'algorithme du Field-Oriented Control (FOC). Cet algorithme permet, en plus de contrôler le courant de sortie, de changer la phase du champ magnétique dans les moteurs afin de maximiser le couple produit \cite{amin2019field, WangFOCDTC}.
+Cet algorithme modélise deux vecteurs, $I_q$ et $I_d$, à contrôler. $I_q$ représente le champ magnétique produit par le moteur, et $I_d$ représente le couple de sortie. Pour maximiser le couple produit, il faut alors minimiser la valeur de $I_q$ afin qu'il influe le moins possible sur le couple de sortie. Le schéma \ref{fig:foc} donne une analogie au fonctionnement de l'algorithme FOC, où le moteur est représenté par un âne et la position de la carotte représente les deux valeurs $I_d$ et $I_q$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/foc.png}
+    \caption{Modèle de moteur brushless et schématisation des vecteurs $I_q$ et $I_d$ dans un moteur. Le schéma de l'âne et de la carotte provient de \textcite{analog_foc}}
+    \label{fig:foc}
+\end{figure}
+
+La seule variable d'entrée dans le FOC est le couple de commande $I_q$, car on cherche à avoir $I_d = 0$. Pour contrôler ces deux valeurs, deux contrôleurs PI viennent les réguler indépendemment \cite{WangFOCDTC}. Cependant il est nécessaire d'identifier les valeurs idéales pour les paramètres de chaque contrôleur PID, ce qui peut être fait avec les méthodes présentées précédemment. Mais il existe des travaux sur l'optimisation de paramètres de PID spécifiquement pour les moteurs brushless \cite{bldc_pid}.
+
+Avec un contrôle en couple et en vitesse disponible pour chaque moteur, il est maintenant question de commander la totalité de la chaîne cinématique et dynamique du robot.
+
+\section{Lois de commande du robot complet}
+
+En pratique, le contrôle de chaque joint du robot peut être fait de manière indépendante, grâce aux lois de commandes précisés dans la section précédente. Cette section s'intéresse plutôt au contrôle de l'organe terminal et de la manière dont il peut être réalisé. En fonction du nombre de degrés de liberté disponible, le problème qui est d'atteindre une position finale (ou vitesse, ou encore couple) pour l'organe terminal peut être sur-contraint ou sous-contraint (plusieurs possibilités de positionnement des moteurs), ou à solution unique, dépendant de la mécanique du robot utilisé. Avec l'aide des modèles cinématique et dynamique inverses, on peut déterminer les vitesses et couples à envoyer au robot. La question est comment optimiser la convergence du système à l'objectif donné.
+
+\subsection{Contrôle en couple}
+
+Les couples moteurs étant liés dans notre robot, \textcite[Chapter 11]{MODERNROBOTICS} fournissent un modèle de contrôle des couples moteurs utilisant le modèle dynamique du robot. Il est donné par l'équation \ref{eq:dyn_torque} :
+
+\begin{equation}
+    \label{eq:dyn_torque}
+    \boldsymbol{\tau} = \boldsymbol{\Tilde{M}}(\boldsymbol{\theta})\Biggl(\boldsymbol{\ddot{\theta}} + K_p\boldsymbol{\theta_e} + K_i\int{\boldsymbol{\theta_e}}(t)dt + K_d\boldsymbol{\dot{\theta}_e}\Biggl) + \Tilde{\boldsymbol{h}}(\boldsymbol{\theta}, \boldsymbol{\dot{\theta}}).
+\end{equation}
+
+Ce modèle multi-joints se base sur un modèle dynamique considéré suffisamment précis, décrit par les matrices $\boldsymbol{\Tilde{M}}(\boldsymbol{\theta})$ et $\boldsymbol{\Tilde{h}}(\boldsymbol{\theta}, \boldsymbol{\dot{\theta}})$. On retrouve un contrôleur PID avec les coefficients $k_p, k_i, k_d$ sous forme matricielle telle que $K_p = k_p I$, avec l'erreur en angle définie par $\boldsymbol{\theta_e} = \boldsymbol{\theta_d} - \boldsymbol{\theta}$, i.e la différence entre le vecteur des angles à atteindre et le vecteur des angles moteurs actuels.
+
+% cours de contrôle commande
+% - dynamique inverse et l'inversion du modèle dynamique de Lagrange
+% - cinématique inverse pour le contrôle en vitesse de l'end-effector
+% - problématique de précision de position
+
+\subsection{Contrôle en vitesse}
+
+Les cours de Monsieur \textcite{ygorra} fournissent des bases pour la création de modèles cinématiques inverses, permettant un contrôle en vitesse qui permet d'imposer une vitesse de sortie sur l'organe terminal du robot. Un contrôleur PID combiné à ce modèle permet de préciser la manière dont sera atteinte la vitesse terminale. \textcite{MODERNROBOTICS} propose aussi un autre type de loi de commande, basé sur l'idée du PID, appelé \emph{feedforward-feedback controller}, qui profite d'une trajectoire initiale définie en vitesse afin d'améliorer la réponse du système par rapport à une loi de commande en PID générale. La formulation d'une telle loi est donné par l'équation \ref{eq:ff-fb-pid}
+
+\begin{equation}
+    \label{eq:ff-fb-pid}
+    \boldsymbol{\dot{\theta}}(t) = \boldsymbol{\dot{\theta}_d}(t) + K_p\boldsymbol{\theta_e}(t) + K_i\int_{0}^t\boldsymbol{\theta_e}(t)dt.
+\end{equation}
+
+Celle-ci suit les mêmes notations que \ref{eq:dyn_torque}, et est la méthode préférée pour le contrôle en vitesse d'un joint.
+
+\subsection{Contrôle en position}
+
+Il est possible d'utiliser les lois de commandes présentées jusqu'ici afin d'atteindre une position avec une précision dépendante des paramètres identifiés pour chaque contrôleur. Mais dans un cas où un modèle satisfaisant du système n'est pas disponible, des travaux récents \cite{frf, SCHUCHERT2024111398} ont montré l'utilisation de fonctions de réponse en fréquence d'un système, basé sur l'application de la transformée de Fourier sur des données temporelles obtenues sur le robot. Cela constitue une forte différence avec les lois de commandes présentées jusque là, qui étaient orientées modèle. Cette approche orientée données pourrait être utilisée et comparée aux autres approches afin de déterminer la granularité atteignable avec une telle méthode.
+
+\subsection{Model Predictive Control}
+
+Les différentes méthodes décrites ne prennent pas en compte qu'il peut exister un certain délai entre l'envoi de la commande et la réponse du système. Ce délai peut être modélisé à l'intérieur de la loi de commande, mais il existe une loi de commande différente qui se base sur la description dynamique du système contrôlé, appelé modèle prédictif, ou \emph{Model Predictive Control} (MPC). \cite{MPC, MPC_WIKIPEDIA} décrivent les différentes techniques et implémentations de ce type de loi de commande, qui cherche à prédire les prochaines commandes à envoyer dans un horizon fixe, en générant une trajectoire à un instant $t$, en se basant sur la dynamique du système et de potentiels filtres de Kalman afin d'améliorer la prédiction de l'état futur. Dans la suite de commandes générées, on ne prend que la commande au prochain instant $t+1$, et on répète le même processus jusqu'à atteindre la sortie voulue pour le système.

@@ -1,0 +1,37 @@
+\chapter{Le premier chapitre}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et tellus ut dui tristique lacinia vel at leo. Praesent cursus accumsan mauris, vitae pulvinar dolor blandit id. Nullam sit amet sem vel elit porta tempus. Pellentesque scelerisque tellus et ligula volutpat porta. Nunc accumsan, augue porttitor eleifend tincidunt, mauris tortor interdum velit, vehicula gravida mauris felis sed dolor. Nullam eget elit metus, nec ultrices enim. Sed bibendum, nibh et eleifend malesuada, neque nisi blandit arcu, eget adipiscing nisi quam sed ligula. Pellentesque imperdiet dictum ultrices. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+\section{Une section d'un chapitre}
+
+Aenean elementum adipiscing elit vitae fermentum. Praesent vel pretium justo. Cras vel nibh ac lorem sollicitudin malesuada. Proin malesuada, erat in ullamcorper facilisis, mauris justo vehicula augue, id euismod quam nisi vitae magna. Vestibulum ut risus massa, vel euismod risus. Curabitur in blandit libero. Aliquam eleifend nisl sit amet lacus viverra ut malesuada enim venenatis. In sodales, sapien id feugiat adipiscing, quam nisl sagittis augue, ut scelerisque mi purus in justo. In ullamcorper rutrum magna, a tincidunt neque eleifend eu.
+
+Phasellus tempus facilisis justo eu lobortis. Vestibulum vitae sem sed ante dictum commodo. Aenean nisi quam, sollicitudin a mattis vitae, auctor nec lorem. Integer convallis nunc ut leo imperdiet quis consequat magna semper. Nunc euismod laoreet neque in volutpat. Integer augue lectus, sodales a rutrum a, congue nec velit. Pellentesque nisi enim, placerat et ultricies sollicitudin, tempor ac risus. Nullam condimentum, tellus id elementum semper, nisl odio cursus odio, eu mollis sapien ipsum nec sapien. Vivamus eget porta lectus.
+
+
+\subsection{Une sous section d'un chapitre}
+
+Praesent in turpis ligula. Cras convallis condimentum quam in consectetur. Etiam iaculis nisi ac justo tempus pellentesque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc eleifend nunc vel lacus tempor sagittis ut in massa. Quisque semper varius tellus. Duis ornare auctor libero, in iaculis ante mollis ac.
+
+Vivamus enim augue, malesuada eget bibendum sed, pharetra eleifend lacus. Curabitur elit justo, varius eget iaculis in, iaculis vel leo. Nulla vulputate felis urna. Donec faucibus, velit nec congue faucibus, ligula turpis consectetur arcu, ut faucibus nisi nunc vitae eros. Donec ut congue ipsum. Nullam blandit risus nec massa convallis malesuada. Nullam fringilla elementum neque, gravida adipiscing nulla scelerisque non.
+
+\LaTeX est particulièrement adapté à l'écriture d'équations. Par exemple il est possible de faire apparaître un équation dans le texte comme suit $x_{i,j}^2 + y_{i,j}^2 \leq 1$. Pour mettre en évidence une équation, il est aussi possible de la faire apparaître comme celle qui suit
+\begin{equation}
+	\sum_{i=1}^{n} i = \frac{n(n-1)}{2}. \label{eq:euler_formule_somme}
+\end{equation}
+
+Il est ensuite possible de faire référence à une équation telle que l'\Equation{eq:euler_formule_somme} en utilisant le \lstinline[language=tex]{label} défini dans l'équation. Il est aussi possible de ne pas numéroter une équation comme dans l'exemple ci-après
+\begin{equation}
+	1+1=2, \nonumber
+\end{equation}
+où apparait une équation finalement pas très intéressante.
+
+Il est aussi possible d'avoir recours à des mises en forme d'équations complexes
+\begin{align}
+	\ve\rt{a} & = \pt\rt{a} - \pt[q]\rt{a}   \nonumber                                                      \\
+	          & = \pt\ft{a}{b}+\Rot\ft{a}{b}\pt\rt{b} - (\pt\ft{a}{b}+\Rot\ft{a}{b}\pt[q]\rt{b})  \nonumber \\
+	          & = \Rot\ft{a}{b} \ve\rt{b}  \label{eq:meca:transform_a_vector}
+\end{align}
+en utilisant des environnements de type tableau ou autres.
+
+Si c'est nécessaire une référence à l'\Appendix{chap:mon_annexe} peut-être faite.

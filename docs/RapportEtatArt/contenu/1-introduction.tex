@@ -1,0 +1,56 @@
+\chapter*{Introduction}
+% Ajoute un chapitre non numéroté à la table des matières
+\addcontentsline{toc}{chapter}{Introduction}
+
+% \emph{(NOTE: à terme, l'intro sera 5 paragraphes sans sous-titres)}
+
+% \subsubsection*{la présentation du contexte du travail réalisé et faisant l'objet du rapport}
+
+%\begin{itemize}
+%	\item travail avec AUCTUS pour réaliser un bras 3R parfaitement connu et parfaitement contrôlé afin de pouvoir remplacer les robots colaboratifs du commerce qui sont pleins de boîtes noires
+%\end{itemize}
+
+L’équipe de recherche AUCTUS, du centre Inria de l’Université de Bordeaux, développe des solutions de robotique collaborative pour assister l’humain au travail. Cette thématique de recherche se décline en trois axes scientifiques : analyse et modélisation du comportement (biomécanique et cognitif) humain ; interaction et couplage humain-robot ; conception et contrôle des systèmes cobotiques.
+Dans ce troisième axe, l’équipe développe des lois de commande pour les systèmes robotiques, et principalement les bras manipulateurs. Ces lois visent à mieux utiliser les capacités physiques et perceptives du robot, à garantir la sécurité du système et de son environnement, et à permettre une interaction entre le robot et un.e opérateur.rice humain.e dans la réalisation de tâches complexes.
+
+%\subsubsection*{les enjeux du problème traité}
+%
+%\begin{itemize}
+%	\item problèmes des robots actuellement disponible dans le commerce
+%	\item complexité d'une modélisation parfaite
+%	\item complexité d'un contrôle sans faille
+%\end{itemize}
+
+Chaque développement doit être validé expérimentalement sur des robots réels, afin d’en étudier les performances et les limites. Ces validations se font aujourd’hui sur des cobots du commerce (Panda Franka Emika, LBR iiwa Kuka, etc.), souvent mal-dimensionnés pour la tâche à réaliser, et pour lesquels on ne dispose pas forcément d’une couche de commande bas niveau ouverte ni d’une modélisation précise. Ce projet vise donc à mettre en œuvre un prototype de bras à trois degrés de liberté en rotation (3R) et sa commande, pour permettre une validation de développements de l’équipe sur un prototype plus maîtrisé.
+
+%\subsubsection*{les travaux existants ayant déjà traité tout ou partie du problème en question}
+%
+%\begin{itemize}
+%	\item ODRI pour la patte en elle-même (hardware notamment)
+%	\item \emph{Modern Robotics} \& \emph{Robotics} pour les maths et les lois de commande
+%	\item les différents papiers pour le reste
+%\end{itemize}
+
+Pour la réalisation de ce prototype, il a été choisi de partir de la conception légère et simple du projet opensource ODRI (Open Dynamic Robot Initiative) \cite{grimminger2020open}. Ce projet propose une solution matérielle et logicielle complète et partagée du robot quadrupède Solo à 12 degrés de liberté. Nous utiliserons la conception d’une patte de ce robot, montée sur un bâti fixe, pour constituer le prototype de bras 3R utilisé pour ce projet.
+L’objectif du projet est d’établir un modèle précis de ce bras robotique, en identifiant notamment son modèle d’actionnement, et de développer l’architecture de commande de base qui nous permettra de piloter le robot en position, vitesse et couple. Nous testerons cette architecture de commande sur des tâches simples de suivi de trajectoires.
+
+%\subsubsection*{les limites de ces travaux}
+%
+%\begin{itemize}
+%	\item ODRI : plein de boîtes noires
+%	\item Livres : très théorique, pas exactement ce qu'on veut
+%	\item autre : tri à effectuer
+%\end{itemize}
+
+Cependant, une modélisation complète de cette patte reste à faire étant donné que la mécanique ne respecte pas exactement les spécifications utilisées dans le robot proposé par ODRI.
+
+%\subsubsection*{les contributions du travail présenté dans le rapport au regard des problèmes ouverts %évoqués avant}
+%
+%\begin{itemize}
+	%\item état de l'art qui présente en détail les technos et matériels disponibles aujourd'hui qui %seront utilisées dans l'objectif
+%\end{itemize}
+
+Cet état de l'art permet donc de répondre de manière théorique aux objectifs posés en présentant
+l'architecture matérielle ainsi qu'une modélisation mathématique d'un tel robot en première partie,
+les façons de contrôler un robot 3R en deuxième partie,
+et finira sur les techniques de calibration en troisième partie.

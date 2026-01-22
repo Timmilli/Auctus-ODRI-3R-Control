@@ -1,0 +1,223 @@
+% Obligatoire ! Spécifie le type de document avec parmi les options possibles le
+% format papier et la taille de police par défaut
+\documentclass[a4paper,11pt,french]{scrbook}
+
+%        1         2         3         4         5         6          7         8
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                               %
+%                                 PREAMBULE                                     %
+%                                                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%% Pour gérer la langue (par défaut : anglais) %%%%%%%%%%
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{csquotes}
+
+%%%%%%%%%% Pour enrichir les possibilités de mise en forme ... %%%%%%%%%%
+% ... des équations
+\usepackage{amssymb,amsmath,amsthm}
+% ... des algorithmes
+\usepackage[ruled,vlined]{algorithm2e}
+
+%%%%%%%%%% Pour enrichir les éléments de mise en page %%%%%%%%%%
+\usepackage{minitoc, footmisc}
+
+%%%%%%%%%% Pour enrichir les possibilités de mise en page du texte %%%%%%%%%%
+\usepackage{helvet, courier, type1cm}
+% Pour faire apparaitre joliment du code dans le rapport
+\usepackage{listings}
+% Pour enrichir les possibilités de mise en forme des légendes
+\usepackage[small]{caption}
+
+%%%%%%%%%% Pour enrichir les possibilités de mise en page des figures %%%%%%%%%%
+\usepackage{graphicx}
+% Pour spécifiee les chemins par défaut où aller chercher les figures
+\graphicspath{{./img/}}
+\usepackage{subcaption}
+\usepackage{color}
+\definecolor{blackgreen}{rgb}{0,0.4,0}
+
+%%%%%%%%%% Pour enrichir les possibilités de mise en forme des annexes %%%%%%%%%%
+\usepackage{appendix}
+
+%%%%%%%%%% Modification de la mise en page par défaut %%%%%%%%%%
+%\addtolength{\hoffset}{1cm}
+\addtolength{\voffset}{-.5cm}
+\addtolength{\textheight}{1cm}
+%\addtolength{\textwidth}{0.5cm}
+
+%%%%%%%%%% Modification des ENTETEs ET PIEDs DE PAGE par défaut %%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy} \fancyhf{}
+\fancyhead[RE]{\nouppercase{\textit{\leftmark}}} 	% Right even
+\fancyhead[LO]{\nouppercase{\textit{\rightmark}}} 	% Left odd
+\fancyhead[LE]{\textbf{\thepage}}			% Left even
+\fancyhead[RO]{\textbf{\thepage}}	 		% Left even
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{50pt}
+\setlength{\oddsidemargin}{30pt}  	% Marge gauche sur pages impaires
+\setlength{\evensidemargin}{0pt} 	% Marge gauche sur pages paires
+
+
+%%%%%%%%%% Mise en forme des liens %%%%%%%%%%
+\usepackage[style=numeric, sorting=none, language=french]{biblatex}
+\usepackage{hyperref} 
+\usepackage{cleveref}
+\usepackage{xcolor}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	urlcolor=blue,
+	citecolor=blue}
+	
+\newcommand{\citeref}[1]{%
+		\begin{otherlanguage}{british}%
+		\cref{#1}%
+		\end{otherlanguage}
+}
+\newcommand{\Citeref}[1]{%
+		\begin{otherlanguage}{british}%
+		\Cref{#1}%
+		\end{otherlanguage}
+}
+
+\crefname{table}{table}{tables}
+\Crefname{table}{Table}{Tables}
+
+\addbibresource{references.bib}
+\addbibresource{calibration_references.bib}
+\addbibresource{commande_references.bib}
+
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                               %
+%               Configuration de certaines commandes                            %
+%                                                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Gestion de la mise en forme du code (Cf. la doc du package listings)
+\lstset{language=C, %C
+%
+basicstyle=\ttfamily\scriptsize,        % la taille de la police de caractère utilisée pour le code
+keywordstyle=\color{red}\textbf,	% le style des mots clés du langage
+commentstyle=\color{blue},		% le style des commentaires
+%
+numbers=left,                   	% où mettre les numéros de ligne
+numberstyle=\ttfamily\scriptsize, 	% le style des numéros de ligne
+numberblanklines=false,
+%
+captionpos=t,                   % place la légende en bas
+frame=TB,	                %
+%
+showspaces=false,               % affichage des espaces
+showstringspaces=false,         % affichage des chaines de caractères
+showtabs=false,                 % affichage des tabulations dans les chaines de caractères
+tabsize=4,	                % taille d'une tabulation
+%
+moredelim=[s][\color{blackgreen}]{'}{'},
+moredelim=[s][\color{blackgreen}]{"}{"},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%% Définition de commandes et de raccourcis personnalisés %%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\tens}[1]{#1}
+\providecommand{\vect}[1]{\mbox{\boldmath${#1}$}}%$
+\newcommand{\argmin}[1]{\underset{#1}{\operatorename{argmin}}}
+\newcommand{\diag}{\mathop{\mathrm{diag}}}
+\newcommand{\norm}[1]{\ensuremath{\left\lVert #1 \right\rVert}}
+
+\renewcommand{\frame}[1]{\ensuremath{\Psi_{#1}}}	%frame				\Psi_{\uppercase{#1}}
+\newcommand{\R}[1]{\ensuremath{\mathbb{R}^{#1}}}	%R for real
+\newcommand{\Id}[1]{\ensuremath{\tens{I}_{#1}}}		%Identity matrix
+\newcommand{\tp}{\ensuremath{^{\mathsf{T}}}}		%transpose
+\newcommand{\ft}[2]{\ensuremath{_{#1,#2}}} 			%from to
+\newcommand{\rt}[1]{\ensuremath{^{#1}}}				%relative to		%transpose
+\newcommand{\HM}{\ensuremath{\tens{H}}}				%homogenous matrix
+\newcommand{\Rot}{\ensuremath{\tens{R}}}			%rotation matrix
+\newcommand{\homo}[1]{\ensuremath{\widetilde{#1}}}	%homogeneous coordinate
+\renewcommand{\skew}[1]{\ensuremath{\widehat{#1}}}	%skew-matrix related to a vector
+\newcommand{\pt}[1][p]{\ensuremath{\vect{#1}}}		%point in space
+\newcommand{\ve}[1][u]{\ensuremath{\vect{#1}}}		%vector in space
+\newcommand{\force}{\ensuremath{\vect{f}}}			%force
+\newcommand{\torque}{\ensuremath{\vect{\tau}}}		%torque
+\newcommand{\ttorque}{\ensuremath{\tau}}			%torque for subscript
+
+\newcommand{\Eq}[1]{Eq.(\ref{#1})}
+\newcommand{\Eqs}[2]{Eqs.(\ref{#1})--(\ref{#2})}
+\newcommand{\Equation}[1]{Équation~(\ref{#1})}
+\newcommand{\Problem}[1]{Problème~(\ref{#1})}
+\newcommand{\Algo}[1]{Algorithme~(\ref{#1})}
+\newcommand{\Algos}[2]{Algorithmes~(\ref{#1})--(\ref{#2})}
+\newcommand{\Fig}[1]{Fig.~\ref{#1}}
+\newcommand{\Figs}[2]{Figs.~\ref{#1}~\&~\ref{#2}}
+\newcommand{\Figure}[1]{Figure~\ref{#1}}
+\newcommand{\Sec}[1]{Section~\ref{#1}}
+\newcommand{\Chapter}[1]{Chapitre~\ref{#1}}
+\newcommand{\Chapters}[2]{Chapitres~\ref{#1}--\ref{#2}}
+\newcommand{\Appendix}[1]{Annexe~\ref{#1}}
+\newcommand{\Sections}[2]{Sections~\ref{#1}--\ref{#2}}
+\newcommand{\Table}[1]{Table~(\ref{#1})}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                               %
+%                             DEBUT DU DOCUMENT                                 %
+%                                                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%-------------------------  Gestion des tables des matières et numérotations  -------------------------%
+\frontmatter
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+%------------------------------------> Page de titre
+\begin{titlepage}
+	\input{contenu/0-rapport_couverture}
+\end{titlepage}
+\newpage
+\thispagestyle{empty}
+\null
+
+\include{contenu/0-resume}
+
+%------------------------------------> Table des matières
+\tableofcontents
+
+%------------------------------------> Liste des figures
+\listoffigures
+\addcontentsline{toc}{chapter}{\listfigurename}
+
+%-------------------------  Corps du rapport  -------------------------%
+\mainmatter
+
+%#####################################################################################
+%#####################################################################################
+%#####################################################################################
+
+%\include{contenu/1-introduction-prof}
+\include{contenu/1-introduction}
+%\include{contenu/le_premier_chapitre}
+
+\include{contenu/2-les_robots}
+\include{contenu/3-controle_du_robot}
+\include{contenu/4-calibration}
+\include{contenu/5-conclusion}
+%\appendix
+%\include{contenu/6-annexe}
+%\include{contenu/6-annexe-prof}
+
+
+%-------------------------  Bibliographie  --------------------------%
+
+\printbibliography[
+	heading=bibintoc,
+	title={Bibliographie}
+]
+
+\end{document}

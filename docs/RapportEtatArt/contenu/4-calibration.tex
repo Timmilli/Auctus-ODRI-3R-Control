@@ -1,0 +1,88 @@
+\chapter{Calibration et identification des paramètres du modèle}
+
+L'utilisation d'un modèle dynamique établit par l'équation~\ref{eq:dynamique} impose de prendre en compte de nombreux paramètres très précis du bras.
+Malgré que quelques uns d'entre eux peuvent être calculés assez simplement, obtenir une très bonne connaissance d'autres paramètres peut s'avérer très compliqué.
+De plus, la fabrication des composants du robots est soumise à de très légères imprécisions qui peuvent apporter des erreurs entre un modèle parfait issue de la simulation et le robot physique.
+
+Une modélisation en CAO permet par exemple de connaître les paramètres cinématiques et dynamiques simples, mais ne peut pas prendre en compte des effets de la dynamique plus complexes comme les frottements dans les articulations.
+Pour contrer cela, des méthodes par mesures itératives peuvent être utilisées pour estimer de tels paramètres.
+
+Cette dernière partie se concentre sur les méthodes de calibration d'abord pour les paramètres cinématiques, puis pour les paramètres dynamiques.
+
+\section{Paramètres cinématiques}
+
+Les paramètres géométriques et cinématiques sont en général entièrement décrits par le fichier URDF et par la CAO du robot. Cependant, il se peut que ceux-ci soient manquant. Afin de corriger cela, des procédures de calibration de ces paramètres doivent être mis en place.
+
+Ces procédures peuvent être aussi simple qu'une mesure approximative à l'aide d'un mètre, ou bien plus complète comme dans les méthodes à boucles fermées proposées par \textcite{IKITS1997} qui imposent des contraintes planaires sur la position de l'outil.
+Or, en l'absence de capteurs extérieurs, il est compliqué de déterminer si l'outil effleure parfaitement le plan, où s'il est légèrement dessous ou dessus.
+\textcite{ZHUANG1999} proposent alors d'imposer des contraintes multi-planaires qui, sous certaines conditions, permettent d'obtenir des mesures équivalentes à celles mesurées par visée laser.
+\textcite{MEGGIOLARO2001} utilisent plutôt une contrainte de contact sphérique qui a l'avantage d'être moins coûteux et moins encombrant que les autres méthodes, mais qui souffre des mêmes problématiques que les deux papiers précédents.
+
+Une autre approche consiste à utiliser une capture des mouvements du bras afin de déterminer et corriger les erreurs de déplacements dû à un modèle incomplet.
+\textcite{GAO2022104795} se basent sur le système de capture de mouvements optique \emph{VICON} composé de 9 caméras et de 48 marqueurs répartis par 8 sur chaque articulation.
+Cette approche permet notamment de pouvoir déterminer les angles de toutes les articulations et à n'importe quel instant en ne se basant que sur une position de départ et une position courante.
+
+Une troisième méthode consiste à utiliser un pointeur laser \cite{GATTRINGER2018} qui est alors considéré comme un membre supplémentaire du robot et qui permet d'obtenir une chaîne cinématique virtuellement fermée.
+\textcite{GATLA20071} ont prouvé que cette méthode permet d'augmenter grandement la visibilité des erreurs dans les articulations ce qui permet de mieux les corriger.
+De la même manière que pour \textcite{GAO2022104795}, ceux deux méthodes permettent de faire des mesures dans un espace bien plus large puisqu'elles perdent les contraintes planaires.
+Dans une étude ultérieure, \textcite{GATLA20072} propose une façon d'automatiser cette calibration en étudiant en temps réel un retour vidéo déjà présent.
+
+\section{Paramètres dynamiques}
+
+De la même manière que pour les paramètres cinématiques, une partie des paramètres dynamiques peuvent être calculés via la description du robot.
+Cependant, d'autres paramètres ne peuvent être calculés qu'après simplification du modèle. Or, dans l'objectif d'obtenir un modèle précis et qui ignore le moins de paramètres possibles, ceci n'est pas envisageable.
+Pour cela, une seconde étape de calibration doit être effectuée afin de déterminer ces paramètres manquants.
+
+\textcite[Chapter 7.4]{siciliano2009robotics} propose de réaliser une calibration par itération.
+En supposant que le bras bouge librement et sans contact extérieur, on peut réécrire l'équation~\ref{eq:dynamique} de telle manière à isoler les paramètres à identifier, on a alors :
+
+\begin{equation}
+	\boldsymbol{\tau} =
+	\boldsymbol{Y}(\boldsymbol{q},\boldsymbol{\dot{q}},\boldsymbol{\ddot{q}})
+	*
+	\boldsymbol{\pi}
+\end{equation}
+
+\noindent où $\boldsymbol{Y}$ dépend des positions articulaires, des vitesses et des accélérations, $\boldsymbol{\tau}$ des couples des actionneurs, et $\boldsymbol{\pi}$ des paramètres à identifier.
+De cette manière, en mesurant les couples, les positions articulaires, les vitesses et les accélérations aux instants $t_1, \dots, t_N$, on peut écrire :
+
+\begin{equation}
+	\boldsymbol{\bar{\tau}} =
+	\begin{bmatrix}
+		\boldsymbol{\tau}(t_1) \\
+		\vdots                 \\
+		\boldsymbol{\tau}(t_N)
+	\end{bmatrix} =
+	\begin{bmatrix}
+		\boldsymbol{Y}(t_1) \\
+		\vdots              \\
+		\boldsymbol{Y}(t_N)
+	\end{bmatrix}
+	*
+	\boldsymbol{\pi}
+	=
+	\boldsymbol{\bar{Y}}
+	*
+	\boldsymbol{\pi}.
+	\label{eq:dyn_iteration}
+\end{equation}
+
+\noindent Résoudre l'équation~\ref{eq:dyn_iteration} par la méthode des moindres carrés revient alors à résoudre :
+
+\begin{equation}
+	\boldsymbol{\pi} =
+	(\boldsymbol{\bar{Y}}^+_L)
+	\boldsymbol{\bar{Y}}
+	\boldsymbol{\bar{\tau}}
+\end{equation}
+
+\noindent où $\boldsymbol{\bar{Y}}^+_L$ est la pseudo inverse à gauche de $\boldsymbol{\bar{Y}}$.
+Cependant, il est nécessaire de définir des contraintes sur les différentes variables dynamiques pour que les résultats respectent une cohérence physique.
+Une des contraintes est par exemple d'imposer des masses positives.
+
+\textcite{MAMEDOV2020} utilise cette définition et propose une méthode afin de déterminer les différents paramètres.
+Cette méthode consiste à mesurer le courant, les positions articulaires et les vitesses, et d'estimer les accélérations (méthodes des différences finies centrées) au travers de trajectoires construites à partir de séries de Fourrier et de polynômes de degré 5.
+
+Une autre façon de déterminer les inconnues dynamiques est d'utiliser le deep learning.
+\textcite{WANG2020} proposent une solution de calibration composé d'un \emph{Input Control Module} (ICM) et d'un \emph{Error Learning Model} (ELM), qui est basé sur une \emph{long short-term memory} (LSTM) et d'un mécanisme d'attention.
+Cette assemblage permet de compenser les difficultés de mesurer les frottements et les erreurs de mesures les couples locaux.
