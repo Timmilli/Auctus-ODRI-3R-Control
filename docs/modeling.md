@@ -4,15 +4,15 @@ La modélisation géométrique permet de lier la position du bout de la patte et
 Comme les moteurs du bras sont contrôlés en vitesse, ce modèle ne permettra pas de réaliser un premier contrôle mais permettra en revanche d'établir le modèle cinématique de la section suivante.
 
 Le modèle géométrique direct (MGD) permet de définir la position de l'outil en fonction des angles des articulations et est établie grâce aux matrices de transformations homogènes.
-Ces dernières sont définies d'après les repères de la ci-après eux-mêmes définis suivant la convention de Denavit-Hartenberg [TODO cite].
+Ces dernières sont définies d'après les repères de la ci-après eux-mêmes définis suivant la convention de Denavit-Hartenberg.
 
 <div>
   <p align='center'>
     <img alt='reperes du bras'
-         src='../images/logo_em.jpg' />
+         src='../images/chaine_geometrique.svg' />
   </p>
   <p align='center'>
-    Définition des repères du bras d'après la convention de Denavit-Hartenberg [TODO cite].
+    Définition des repères du bras d'après la convention de Denavit-Hartenberg. Pour chaque repère, l'axe Y doit être placé de façon à former un trièdre direct avec les axes X et Z.
   </p>
 </div>
 
@@ -105,8 +105,9 @@ $$
 		S\theta_1 & 0  & C\theta_1  & 0   \\
 		0         & -1 & 0          & h_1 \\
 		0         & 0  & 0          & 1
-	\end{bmatrix}                     \\
+	\end{bmatrix}
 $$
+
 $$
 	{^2T_1}(\theta_2)   =
 	\begin{bmatrix}
@@ -114,8 +115,9 @@ $$
 		S\theta_2 & C\theta_2  & 0 & -l_2*C\theta_2 \\
 		0         & 0          & 1 & h_2            \\
 		0         & 0          & 0 & 1
-	\end{bmatrix} \\
+	\end{bmatrix}
 $$
+
 $$
 	{^3T_2} (\theta_3)  =
 	\begin{bmatrix}
@@ -123,7 +125,7 @@ $$
 		S\theta_3 & 0 & -C\theta_3 & -l_3*C\theta_3 \\
 		0         & 1 & 0          & h_3            \\
 		0         & 0 & 0          & 1
-	\end{bmatrix}\notag
+	\end{bmatrix}
 $$
 
 Ainsi, en multipliant ces trois matrices, on trouve le MGD, fonction définie par les trois premières lignes de la dernière colonne de la matrice $^3T_0$. Ainsi, cette fonction est
@@ -183,12 +185,13 @@ $$
 $$
 
 De cette manière, on peut écrire que
+
 $$
 	\boldsymbol{J}(\boldsymbol q) =
 	\begin{bmatrix}
 		\cfrac{\partial f_1}{\partial q_1}(\boldsymbol q) & \cfrac{\partial f_1}{\partial q_2}(\boldsymbol q) & \cfrac{\partial f_1}{\partial q_3}(\boldsymbol q) \\
 		\cfrac{\partial f_2}{\partial q_1}(\boldsymbol q) & \cfrac{\partial f_2}{\partial q_2}(\boldsymbol q) & \cfrac{\partial f_2}{\partial q_3}(\boldsymbol q) \\
-		\cfrac{\partial f_3}{\partial q_1}(\boldsymbol q) & \cfrac{\partial f_3}{\partial q_2}(\boldsymbol q) & \cfrac{\partial f_3}{\partial q_3}(\boldsymbol q) \\
+		\cfrac{\partial f_3}{\partial q_1}(\boldsymbol q) & \cfrac{\partial f_3}{\partial q_2}(\boldsymbol q) & \cfrac{\partial f_3}{\partial q_3}(\boldsymbol q)
 	\end{bmatrix}
 $$
 
