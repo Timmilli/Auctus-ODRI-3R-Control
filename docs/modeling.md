@@ -9,7 +9,7 @@ Ces dernières sont définies d'après les repères de la ci-après eux-mêmes d
 <div>
   <p align='center'>
     <img alt='reperes du bras'
-         src='../images/chaine_geometrique.svg' />
+         src='../images/chaine_geometrique.png' />
   </p>
   <p align='center'>
     Définition des repères du bras d'après la convention de Denavit-Hartenberg. Pour chaque repère, l'axe Y doit être placé de façon à former un trièdre direct avec les axes X et Z.
